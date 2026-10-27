@@ -2,6 +2,7 @@
 // The 1920×1080 TV stage with the star lattice ground (Ui.starLattice), scaled into a 16:9 frame by the inline script below
 // (inline so the TV still fits when a cached page outlives its script bundle after a deploy).
 interface Props { mode?: string; screen: string; ground?: 'lattice' | 'black' }
+import { TIZEN } from '../lib/site';
 const { mode, screen, ground = 'lattice' } = Astro.props;
 ---
 <div class="tv-frame">
@@ -10,11 +11,19 @@ const { mode, screen, ground = 'lattice' } = Astro.props;
       <svg class="lattice" aria-hidden="true" width="1920" height="1080">
         <defs>
           <pattern id="star8" width="96" height="96" patternUnits="userSpaceOnUse">
-            <g fill="none" stroke="var(--color-pattern-line)" stroke-width="1.5">
-              <rect x="28" y="28" width="40" height="40" />
-              <rect x="28" y="28" width="40" height="40" transform="rotate(45 48 48)" />
-              <path d="M0 48h20M76 48h20M48 0v20M48 76v20" />
-            </g>
+            {TIZEN ? (
+              <g fill="none" stroke="var(--color-pattern-line)" stroke-width="1.5">
+                {[0, 45, 90, 135].map((a) => <ellipse cx="48" cy="48" rx="9" ry="30" transform={`rotate(${a} 48 48)`} />)}
+                <circle cx="48" cy="48" r="7" />
+                <circle cx="0" cy="0" r="4" /><circle cx="96" cy="0" r="4" /><circle cx="0" cy="96" r="4" /><circle cx="96" cy="96" r="4" />
+              </g>
+            ) : (
+              <g fill="none" stroke="var(--color-pattern-line)" stroke-width="1.5">
+                <rect x="28" y="28" width="40" height="40" />
+                <rect x="28" y="28" width="40" height="40" transform="rotate(45 48 48)" />
+                <path d="M0 48h20M76 48h20M48 0v20M48 76v20" />
+              </g>
+            )}
           </pattern>
         </defs>
         <rect width="1920" height="1080" fill="url(#star8)" />

@@ -150,6 +150,10 @@ export const PAGES: Page[] = [
 ];
 
 export const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-/** Site-relative URL of a page in a language: Arabic at the root, English under /en/. */
-export const href = (slug: string, lang: Lang) => BASE + (lang === 'en' ? 'en/' : '') + (slug ? slug + '/' : '');
+/** The Tizen widget build (tizen/): flat .html files that link to each other relatively. */
+export const TIZEN = import.meta.env.PUBLIC_TARGET === 'tizen';
+/** Site-relative URL of a page in a language: Arabic at the root, English under /en/ (Tizen: en-<slug>.html). */
+export const href = (slug: string, lang: Lang) =>
+  TIZEN ? (slug ? (lang === 'en' ? 'en-' : '') + slug : lang === 'en' ? 'en' : 'home') + '.html'
+    : BASE + (lang === 'en' ? 'en/' : '') + (slug ? slug + '/' : '');
 export const pageOf = (slug: string) => PAGES.find((p) => p.slug === slug)!;

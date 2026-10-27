@@ -5,6 +5,13 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 ## [Unreleased]
 
 ### Added
+- `tizen/`: Samsung Tizen TV port (web app, Arabic and English). Reuses the web preview's screens; real app launching,
+  favourites, Back key, adhan audio and prayer watching while Afnon is in front. See `tizen/README.md`.
+  Radio keeps playing across screens (persistent shell, AVPlay), with a mini bar; Home shows Open-Meteo weather, a
+  brand-tinted glow behind the focused favourite and brand logos. Favourites: YouTube, Yango Play, WATCH IT, Shahid and an HDMI inputs tile (opens Samsung's Source app). Prayer break: for ten minutes after the call, opening another app needs a second press.
+  The mihrab shows a calm Fajr-to-Isha day arc instead of a countdown; More lists only a curated set of installed apps
+  with Arabic names; Home favourites are icon-only (96px) and the HDMI tile opens a picker of the connected inputs
+  (needs the `tv.window` privilege; full-screen video behind the page, Back or any key returns, and the page goes transparent so video shows instead of a blue screen); WATCH IT and Yango glow colours swapped; Home shows the time and one date line inside the mihrab with the verse below the day arc, and drops the app Settings tile and the unopenable Games and Music tiles; the call screen shows the prayer that is actually calling; a wide tulip photo (personal, untracked `tizen/assets/bg/tulip.jpg`) under a light slate wash, with the blue and gold shifted to stem green and tulip yellow on Tizen, replaces the star lattice; the clock uses the UI font; "All apps" is a wide one-line tile; Home also leaves an HDMI input on the launcher's resume (appcontrol) event; ten extra radio stations (Nagham, Nogoum, Radio 9090, Quran Tafsir, ON Sport, talkSPORT 1/2, RMC, SomaFM).
 - Calculation method «وزارة الأوقاف والشؤون الدينية، سلطنة عُمان» (Oman Ministry of Awqaf): Fajr and Isha at 18°, Asr
   by the standard shadow, +5 minutes on Dhuhr, Asr and Maghrib. The ministry publishes no parameters, so they were
   fitted to its own timetable (mara.gov.om/arabic/calendar_page1.asp): across 15 Omani cities and 2026 every prayer

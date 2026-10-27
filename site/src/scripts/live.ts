@@ -39,7 +39,9 @@ export function live(model: (c: Ctx) => Model, onTick?: (c: Ctx) => void) {
   const lang = document.documentElement.lang as Lang;
   const mode = stage.dataset.mode || undefined;
   let prefs = loadPrefs();
-  let shift = mode ? shiftFor(mode, prefs) : 0;
+  // On the Tizen build the call is real, so the clock is never moved to a test moment.
+  const shiftOf = () => (mode && import.meta.env.PUBLIC_TARGET !== 'tizen' ? shiftFor(mode, prefs) : 0);
+  let shift = shiftOf();
   const render = () => {
     const c = makeCtx(lang, prefs, new Date(Date.now() + shift), mode);
     bind(stage, model(c));
@@ -48,7 +50,7 @@ export function live(model: (c: Ctx) => Model, onTick?: (c: Ctx) => void) {
   render();
   setInterval(render, 1000);
   return (p?: Prefs) => {
-    if (p) { prefs = p; savePrefs(p); shift = mode ? shiftFor(mode, prefs) : 0; }
+    if (p) { prefs = p; savePrefs(p); shift = shiftOf(); }
     render();
   };
 }
