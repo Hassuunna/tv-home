@@ -1,7 +1,7 @@
 // Installed apps (tizen.application.getAppsInfo) on Home and All apps: favourites, the "more" row and the grid.
 // Only apps the TV reports are shown: nothing is assumed to exist.
 import { favNote } from '../../site/src/screens/apps';
-import { hasTizen, lang, launch, loadPrefs, stage, textFor } from './host';
+import { hasTizen, lang, launch, openWifi, loadPrefs, stage, textFor } from './host';
 
 declare const tizen: any;
 
@@ -17,7 +17,7 @@ const KNOWN: Record<string, { ar: string; en: string }> = {
   'org.tizen.primevideo': { ar: 'برايم', en: 'Prime Video' },
   'com.samsung.tv.csfs': { ar: 'سامسونج', en: 'Samsung Home' },
   'com.samsung.tv.store': { ar: 'المتجر', en: 'Apps' },
-  'org.tizen.menu': { ar: 'الإعدادات', en: 'Settings' },
+  'org.tizen.menu': { ar: 'إعدادات الجهاز', en: 'Device settings' },
   'com.samsung.tv.mycontents': { ar: 'ملفاتي', en: 'My files' },
   'org.tizen.ScreenMirroring-app-tv': { ar: 'مشاركة الشاشة', en: 'Mirroring' },
 };
@@ -68,7 +68,7 @@ export function arrange(apps: App[]) {
 }
 
 // Single-ink brand marks (simple-icons, CC0) for apps whose logo we carry; any other app uses the TV's own icon.
-const LOGOS: [RegExp, string][] = [[/youtube/i, 'youtube'], [/netflix/i, 'netflix'], [/prime/i, 'primevideo'], [/disney/i, 'disneyplus'], [/spotify/i, 'spotify'], [/apple ?tv/i, 'appletv']];
+const LOGOS: [RegExp, string][] = [[/youtube/i, 'youtube-color'], [/netflix/i, 'netflix'], [/prime/i, 'primevideo'], [/disney/i, 'disneyplus'], [/spotify/i, 'spotify'], [/apple ?tv/i, 'appletv']];
 export const logoOf = (app: App) => { const m = LOGOS.filter((l) => l[0].test(app.id + ' ' + app.name))[0]; return m ? 'assets/logos/' + m[1] + '.svg' : ''; };
 
 function icon(app: App, size: number, fallback: Element | null): HTMLElement | Element | null {
@@ -90,6 +90,9 @@ export function homeApps(apps: App[]) {
   const t = textFor();
   const { favs, rest } = arrange(apps);
   const hints = (label: string, other: string) => JSON.stringify([t.hintOk(t.s('open', { app: label })), other]);
+
+  const pill = st.querySelector<HTMLElement>('.pill:not(.radio-pill)');
+  if (pill) { pill.removeAttribute('data-toast'); pill.addEventListener('click', openWifi); }
 
   const first = st.querySelector<HTMLElement>('.fav');
   const have = st.querySelectorAll('.fav').length;
@@ -118,6 +121,18 @@ export function homeApps(apps: App[]) {
     const img = icon(app, 96, glyph);
     if (glyph && img && img !== glyph) glyph.parentNode!.replaceChild(img, glyph);
   });
+
+  // Focus starts on the first favourite, unless the reminder card is up and wants it.
+  const firstFav = [].slice.call(favEls).filter((e: HTMLElement) => !e.hidden)[0] as HTMLElement | undefined;
+  if (firstFav && !st.querySelector('[data-card-ok][data-focus-start]')) {
+    st.querySelectorAll('[data-focus-start]').forEach((e) => e.removeAttribute('data-focus-start'));
+    firstFav.setAttribute('data-focus-start', '');
+    const cur = document.activeElement;
+    if (!cur || cur === document.body || (cur as HTMLElement).classList.contains('fav')) {
+      if (cur === firstFav) firstFav.blur(); // a fresh focus event lets the glow follow it
+      firstFav.focus({ preventScroll: true });
+    }
+  }
 
   const moreEls = st.querySelectorAll<HTMLElement>('button.more');
   moreEls.forEach((el, i) => {

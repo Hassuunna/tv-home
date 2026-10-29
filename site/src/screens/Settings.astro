@@ -225,6 +225,7 @@ const { t, lang } = ctx;
         } else if (r.id === 'station') openStationGroups();
         else if (r.id === 'voice' || r.id === 'voiceFajr') openVoices(r.id === 'voiceFajr');
         else if (r.id === 'room') location.href = href('prayer-day', lang) + '#tv';
+        else if ((r.id === 'device' || r.id === 'network') && !stage.dispatchEvent(new CustomEvent('afnon:system', { detail: r.id, cancelable: true }))) { /* the host opened it */ }
         else toast(`${W} ${r.label}`);
       }
     };

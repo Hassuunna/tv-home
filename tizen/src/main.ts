@@ -5,7 +5,7 @@ import { prayerDay } from '../../site/src/lib/prayer';
 import { appsScreen, homeApps, installed } from './apps';
 import { glow, tidyHome, weather } from './look';
 import { stationOf } from '../../site/src/lib/data';
-import { hasTizen, lang, loadPrefs, stage, startBreak, textFor } from './host';
+import { hasTizen, lang, launch, openWifi, loadPrefs, stage, startBreak, textFor } from './host';
 
 const screen = () => (stage() && stage()!.dataset.screen) || '';
 const HOME = () => href('', lang()) + '#tv';
@@ -53,7 +53,21 @@ window.addEventListener('keydown', (e) => {
 }, true);
 
 // ------------------------------------------------------------------ apps
-if (screen() === 'home') { installed(homeApps); weather(); glow(); tidyHome(); }
+if (screen() === 'home') { installed(homeApps); weather(); glow(); tidyHome();
+  // Focus set while the page is still loading gets dropped; take it once it has settled.
+  window.setTimeout(() => {
+    const cur = document.activeElement;
+    if (cur && cur !== document.body && !(cur as HTMLElement).classList.contains('fav')) return;
+    const start = stage()?.querySelector<HTMLElement>('[data-focus-start]');
+    if (start && !start.hidden) { if (cur === start) start.blur(); start.focus({ preventScroll: true }); }
+  }, 250);
+}
+if (screen() === 'settings') {
+  stage()?.addEventListener('afnon:system', (e) => {
+    e.preventDefault();
+    if ((e as CustomEvent).detail === 'network') openWifi(); else launch('org.tizen.menu');
+  });
+}
 if (screen() === 'apps') installed(appsScreen);
 
 // ------------------------------------------------------------------ coming back to the launcher

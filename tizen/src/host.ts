@@ -59,6 +59,20 @@ export function launch(id: string) {
   }
 }
 
+/** Wi-Fi settings: the system's own screen, else Samsung Settings with a hint of where to go. */
+export function openWifi() {
+  const t = textFor();
+  const guide = () => { say(t.ar ? 'الإعدادات ← كل الإعدادات ← الاتصال ← الشبكة' : 'Settings → All Settings → Connection → Network'); launch('org.tizen.menu'); };
+  if (!hasTizen() || !tizen.ApplicationControl) { guide(); return; }
+  let done = false;
+  const timer = window.setTimeout(() => { if (!done) { done = true; guide(); } }, 4500);
+  const ok = () => { done = true; window.clearTimeout(timer); };
+  const bad = () => { if (done) return; done = true; window.clearTimeout(timer); guide(); };
+  try {
+    tizen.application.launchAppControl(new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/setting/wifi'), null, ok, bad);
+  } catch (e) { bad(); }
+}
+
 // ------------------------------------------------------------------ HDMI inputs
 type Source = { type: string; number: number; connected: boolean; native: any };
 
@@ -158,8 +172,8 @@ export function openHdmi() {
   if (!hasTizen() || !tizen.systeminfo || !tizen.tvwindow) { sourceMenu(); return; }
   const back = document.activeElement as HTMLElement | null;
   readSources((all, cur) => {
-    let list = all.filter((s) => s.connected);
-    if (!list.length) list = all;
+    const list = all.slice().sort((a, b) => Number(b.connected) - Number(a.connected) || a.number - b.number);
+    if (!list.length) { sourceMenu(); return; }
     const layer = document.createElement('div');
     layer.className = 'hdmi-pick';
     layer.setAttribute('role', 'dialog');
@@ -184,7 +198,6 @@ export function openHdmi() {
       const isCur = cur && cur.type === s.type && cur.number === s.number;
       add('HDMI ' + s.number, isCur ? (t.ar ? 'الحالي' : 'Current') : s.connected ? (t.ar ? 'متصل' : 'Connected') : (t.ar ? 'غير متصل' : 'No signal'), () => { closeLayer(layer, null); watch(s, back); }, !s.connected);
     });
-    add(t.ar ? 'قائمة المصادر' : 'Source menu', 'Samsung', () => { closeLayer(layer, back); sourceMenu(); }, false);
     layer.addEventListener('keydown', (e) => {
       const i = btns.indexOf(document.activeElement as HTMLElement);
       if (e.keyCode === 10009 || e.key === 'Escape' || e.key === 'XF86Back') { e.preventDefault(); e.stopPropagation(); closeLayer(layer, back); return; }

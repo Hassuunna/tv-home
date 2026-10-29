@@ -1,5 +1,5 @@
 /* The TV shows the 1920x1080 stage at scale 1, with no preview chrome around it. */
-html, body.tizen { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; background: #0C1B33; }
+html, body.tizen { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; background: linear-gradient(rgba(36, 58, 43, 0.3), rgba(36, 58, 43, 0.45)), url(assets/bg/tulip.jpg) center / cover no-repeat #4a5a4c; }
 body.tizen .tv-wrap { margin: 0; padding: 0; width: 1920px; height: 1080px; max-width: none; }
 body.tizen .tv-frame { position: fixed; inset: 0; width: 1920px; height: 1080px; border-radius: 0; outline: 0; border: 0; box-shadow: none; aspect-ratio: auto; overflow: hidden; }
 body.tizen .tv { --k: 1; transform: none; left: 0; top: 0; }
@@ -7,7 +7,7 @@ body.tizen .tv { --k: 1; transform: none; left: 0; top: 0; }
 .wx { position: absolute; top: 40px; width: 560px; inset-inline-start: auto; color: var(--color-gold-200, #E8C675); direction: inherit; }
 .wx b { display: block; font-size: 46px; font-weight: 500; }
 .wx span { display: block; font-size: 24px; opacity: 0.85; margin-top: 4px; }
-.fav:focus img[src$=".svg"], .tile:focus img[src$=".svg"] { filter: invert(1); }
+.fav:focus img[src$=".svg"]:not([src*="color"]), .tile:focus img[src$=".svg"]:not([src*="color"]) { filter: invert(1); }
 .wx[hidden] { display: none; }
 .glow { position: absolute; left: 0; top: 0; width: 900px; height: 900px; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; will-change: transform, opacity; }
 .fav img[src$=".svg"], .tile img[src$=".svg"] { object-fit: contain; }

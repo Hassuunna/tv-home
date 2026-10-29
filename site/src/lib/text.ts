@@ -2,6 +2,7 @@
 // the ones with logic are ported here from Text.java, method for method. Keep both in step with the app.
 import S from '../data/strings.json';
 import type { Station } from './data';
+import { TIZEN } from './site';
 
 export type Lang = 'ar' | 'en';
 type Entry = { ar: string | string[]; en: string | string[]; d?: boolean };
@@ -9,6 +10,13 @@ const STRINGS = S as Record<string, Entry>;
 const EASTERN = '٠١٢٣٤٥٦٧٨٩';
 
 export type Text = ReturnType<typeof makeText>;
+
+/** Wording that differs on the Samsung build: every station is listed there, and Settings opens the TV's own. */
+const TIZEN_STRINGS: Record<string, Entry> = {
+  stationGroups: { ar: ['الإذاعات', 'القرّاء'], en: ['Radio stations', 'Reciters'] },
+  deviceRow: { ar: 'إعدادات الجهاز', en: 'Device settings' },
+  networkRow: { ar: 'إعدادات الشبكة والواي فاي', en: 'Network and Wi-Fi settings' },
+};
 
 /** Text.java for one language; `eastern` is the Eastern Arabic digits setting (on by default in Arabic). */
 export function makeText(lang: Lang, eastern = lang === 'ar') {
@@ -21,14 +29,14 @@ export function makeText(lang: Lang, eastern = lang === 'ar') {
   };
   /** A string from Text.java by method name, with {params} filled in. */
   const s = (key: string, params: Record<string, string | number> = {}): string => {
-    const e = STRINGS[key];
+    const e = (TIZEN && TIZEN_STRINGS[key]) || STRINGS[key];
     if (!e) throw new Error(`no string "${key}" in Text.java`);
     const v = e[lang] as string;
     const out = v.replace(/\{(\w+)\}/g, (_, n) => String(params[n] ?? ''));
     return e.d ? d(out) : out;
   };
   /** A String[] from Text.java. */
-  const list = (key: string): string[] => STRINGS[key][lang] as string[];
+  const list = (key: string): string[] => ((TIZEN && TIZEN_STRINGS[key]) || STRINGS[key])[lang] as string[];
 
   const sector = (deg: number) => Math.round((((deg % 360) + 360) % 360) / 45) % 8;
   const octant = (bearing: number) =>

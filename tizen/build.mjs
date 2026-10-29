@@ -67,9 +67,9 @@ fs.writeFileSync(path.join(out, 'index.html'), `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=1920"><title>Afnon</title>
 <script src="$WEBAPIS/webapis/webapis.js"></script>
 <link rel="stylesheet" href="afnon.css">
-<style>html.watching,html.watching body{background:transparent!important}html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#0C1B33}
+<style>html.watching,html.watching body{background:transparent!important}html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:linear-gradient(rgba(36,58,43,.3),rgba(36,58,43,.45)),url(assets/bg/tulip.jpg) center/cover no-repeat #4a5a4c!important}
 #view{position:fixed;inset:0;width:1920px;height:1080px;border:0}
-#mini{position:fixed;left:48px;bottom:36px;padding:10px 22px;border-radius:999px;background:#12284d;color:#E8C675;font:500 26px Alexandria,sans-serif;pointer-events:none}
+#mini{position:fixed;left:48px;bottom:36px;padding:10px 22px;border-radius:999px;background:#243a2b;color:#f7e09c;font:500 26px Alexandria,sans-serif;pointer-events:none}
 #mini[hidden]{display:none}</style></head>
 <body><iframe id="view" title="Afnon"></iframe><div id="mini" hidden></div>
 <script src="js/shell.js"></script></body></html>
