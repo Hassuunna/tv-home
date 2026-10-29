@@ -88,11 +88,19 @@ export function tidyHome() {
   st.querySelectorAll('a.more:not(.all)').forEach((a) => a.remove());
   if (!p) return;
   const brs = p.querySelectorAll('br');
-  if (brs.length > 1) brs[0].replaceWith(' ');
+  brs.forEach((br) => br.replaceWith(' '));
   if (ref) {
     const r = document.createElement('small');
     r.textContent = ' ' + (ref.textContent || '');
-    r.style.cssText = 'font-size:0.55em;color:var(--color-mist-400);font-family:inherit';
+    r.style.cssText = 'color:var(--color-mist-400);font-family:inherit';
     p.appendChild(r);
   }
+  // One line: shrink the text to fit the width under the mihrab.
+  const fit = () => {
+    let size = 32;
+    p.style.fontSize = size + 'px';
+    while (p.scrollWidth > 540 && size > 18) { size -= 1; p.style.fontSize = size + 'px'; }
+  };
+  fit();
+  new MutationObserver(fit).observe(p, { childList: true, characterData: true, subtree: true });
 }

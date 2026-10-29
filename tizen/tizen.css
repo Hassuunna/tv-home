@@ -41,8 +41,9 @@ body.tizen .tv[data-screen=home] .when .gdate { display: none; }
 body.tizen .tv[data-screen=home] .ref, body.tizen .tv[data-screen=home] .rule { display: none; }
 body.tizen .tv[data-screen=home] .info { top: 450px !important; }
 body.tizen .tv[data-screen=home] .info .sub, body.tizen .tv[data-screen=home] .info .sub2 { display: none; }
-body.tizen .tv[data-screen=home] .verse { inset-inline-start: 136px; width: 520px; top: 770px; text-align: center; }
-body.tizen .tv[data-screen=home] .verse p { font-size: 32px; line-height: 1.7; text-align: center; margin: 0; }
+body.tizen .tv[data-screen=home] .verse { inset-inline-start: 126px; width: 540px; top: 770px; text-align: center; }
+body.tizen .tv[data-screen=home] .verse p { font-size: 32px; line-height: 1.5; text-align: center; margin: 0; white-space: nowrap; }
+body.tizen .tv[data-screen=home] .verse small { display: block; margin-top: 6px; font-size: 22px !important; }
 
 html.watching, html.watching body, html.watching .tv-frame { background: transparent !important; }
 
