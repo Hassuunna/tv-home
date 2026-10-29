@@ -28,7 +28,7 @@ const more = ar ? ['يوتيوب ميوزك', 'متجر Play', 'مشغل الو�
 const allCount = 14;
 const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this opens' };
 ---
-<Arch ctx={ctx} infoTop={488} subSize={26} subGap={12} sub2Color="var(--color-gold-200)" sub2Gap={8} />
+<Arch ctx={ctx} infoTop={488} subSize={26} subGap={12} sub2Color="var(--color-gold-200)" sub2Gap={8} oneLine={TIZEN} />
 <a class="ft arch-btn" href={href('prayer-day', lang) + '#tv'} {...(cardHidden && !TIZEN ? { 'data-focus-start': '' } : {})} data-hints={hints(t.hintOk(t.s('today')), t.s('hintApps'))}>
   <Icon name="compass" /> <span>{t.s('today')}</span>
 </a>
@@ -65,7 +65,7 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
 ))}
 
 <div class="label more-label caps">{t.s('more')}</div>
-{[...more, t.s('settings')].map((label, i) => {
+{(TIZEN ? more : [...more, t.s('settings')]).map((label, i) => {
   const style = `inset-inline-start:calc(var(--layout-courtyard-inset-inline-start) + ${i} * ((var(--layout-courtyard-width) - 5 * var(--layout-gap-more)) / 6 + var(--layout-gap-more)))`;
   const h = hints(t.hintOk(t.s('open', { app: label })), t.s('hintFavs'));
   return label === t.s('settings')
@@ -126,7 +126,7 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
   import { makeText, type Lang } from '../lib/text';
   import { TIZEN } from '../lib/site';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="home"]')!;
   if (stage.dataset.screen === 'home') {
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => stage.querySelector<T>(s)!;
     const card = $('[data-card]');
@@ -150,7 +150,7 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
       const remind = c.prefs.remind * 60;
       const due = (forced || (remind > 0 && left > 0 && left <= remind)) && card.dataset.for !== dismissedFor;
       showCard(due);
-    });
+    }, stage);
     $('[data-card-ok]').addEventListener('click', () => {
       dismissedFor = card.dataset.for ?? '';
       showCard(false);

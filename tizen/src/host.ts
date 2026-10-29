@@ -6,7 +6,8 @@ import { makeText, type Lang, type Text } from '../../site/src/lib/text';
 
 declare const tizen: any;
 
-export const stage = () => document.querySelector<HTMLElement>('.tv');
+/** The screen in view (the root holds every screen), or a named one. */
+export const stage = (name?: string) => document.querySelector<HTMLElement>(name ? '.tv[data-screen="' + name + '"]' : '.tv-frame:not([hidden]) > .tv');
 export const lang = () => document.documentElement.lang as Lang;
 export const hasTizen = () => typeof tizen !== 'undefined' && !!tizen.application;
 

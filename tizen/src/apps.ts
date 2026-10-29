@@ -85,7 +85,7 @@ function icon(app: App, size: number, fallback: Element | null): HTMLElement | E
 }
 
 export function homeApps(apps: App[]) {
-  const st = stage();
+  const st = stage('home');
   if (!st || !apps.length) return;
   const t = textFor();
   const { favs, rest } = arrange(apps);
@@ -163,7 +163,7 @@ export function homeApps(apps: App[]) {
 const COLS = 5, GAP = 32, TILE_H = 168, TOP = 200, ROWS = 3;
 
 export function appsScreen(apps: App[]) {
-  const st = stage();
+  const st = stage('apps');
   if (!st || !apps.length) return;
   const t = textFor();
   const tiles = st.querySelectorAll<HTMLElement>('.tile');
@@ -269,7 +269,7 @@ export function appsScreen(apps: App[]) {
 
   build();
   const start = st.querySelector<HTMLElement>('.tile');
-  if (start && location.hash === '#tv') start.focus({ preventScroll: true });
+  if (start) start.setAttribute('data-focus-start', '');
 }
 
 const FAV_COUNT = 4;

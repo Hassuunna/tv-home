@@ -33,7 +33,7 @@ const { t, lang } = ctx;
 
 <script>
   import { live } from '../scripts/live';
-  import { href } from '../lib/site';
+  import { href, go } from '../lib/site';
   import { CITIES, METHODS, cityOf, stationOf } from '../lib/data';
   import type { Ctx } from '../lib/ctx';
   import type { Lang } from '../lib/text';
@@ -42,7 +42,7 @@ const { t, lang } = ctx;
     savedDraft, sectionName, stationChoice, stationsOf, type Edit, type SPrefs,
   } from './settings';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="settings"]')!;
   if (stage.dataset.screen === 'settings') {
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => stage.querySelector<T>(s)!;
     const root = $('[data-settings]');
@@ -75,7 +75,7 @@ const { t, lang } = ctx;
       lastRows = h;
       if (fi >= 0) focusRow(fi);
     };
-    const update = live((c) => ({ html: { preview: previewHtml(c) } }), (c) => { ctx = c; rerender(); });
+    const update = live((c) => ({ html: { preview: previewHtml(c) } }), (c) => { ctx = c; rerender(); }, stage);
     // ✓ Saved at the end of the hint line after every save, as long as motion.saved-lifetime.
     const savedEl = $('[data-saved]');
     const lifetime = parseFloat(getComputedStyle(savedEl).getPropertyValue('--motion-saved-lifetime')) * 1000 || 2000;
@@ -195,7 +195,7 @@ const { t, lang } = ctx;
       const to: Lang = i === 0 ? (navigator.language.toLowerCase().startsWith('ar') ? 'ar' : 'en') : i === 1 ? 'ar' : 'en';
       if (to === lang) return;
       try { sessionStorage.setItem(FOCUS, JSON.stringify({ section, row: focusedRow() })); } catch { /* fine */ }
-      location.href = href('settings', to) + '#tv';
+      go(href('settings', to) + '#tv');
     };
     // Editing a seg or step row: OK starts it, ◀▶ move the draft, OK saves, Back cancels.
     const setEdit = (e: Edit | null) => { edit = e; rerender(); };
@@ -224,7 +224,7 @@ const { t, lang } = ctx;
             (k) => save({ ...p(), remind: REMIND[k] }));
         } else if (r.id === 'station') openStationGroups();
         else if (r.id === 'voice' || r.id === 'voiceFajr') openVoices(r.id === 'voiceFajr');
-        else if (r.id === 'room') location.href = href('prayer-day', lang) + '#tv';
+        else if (r.id === 'room') go(href('prayer-day', lang) + '#tv');
         else if ((r.id === 'device' || r.id === 'network') && !stage.dispatchEvent(new CustomEvent('afnon:system', { detail: r.id, cancelable: true }))) { /* the host opened it */ }
         else toast(`${W} ${r.label}`);
       }

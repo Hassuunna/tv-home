@@ -40,6 +40,7 @@ export type Prefs = {
   adhan: boolean;
   station: string;
   voice?: string; voiceFajr?: string; // adhan voices (Adhans ids); unset: the app's defaults
+  tz?: 'auto' | '2' | '3'; // Tizen: Cairo's UTC offset, for a TV clock that is off around the daylight-saving change
   radioResume?: boolean; radioDark?: number; // Settings' radio rows
 };
 

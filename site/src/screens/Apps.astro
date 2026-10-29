@@ -70,9 +70,9 @@ const menuText = {
   import { live } from '../scripts/live';
   import { appsModel } from './apps';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="apps"]')!;
   if (stage.dataset.screen === 'apps') {
-    live(appsModel);
+    live(appsModel, undefined, stage);
 
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => stage.querySelector<T>(s)!;
     const name = $('[data-info-name]'), note = $('[data-info-note]');

@@ -2,7 +2,7 @@
 // the page's [data-k] (innerHTML) and [data-a] (attributes) elements.
 import { DEFAULT_PREFS, type Prefs } from '../lib/data';
 import { makeCtx, type Ctx, type Model } from '../lib/ctx';
-import { shiftFor } from '../lib/prayer';
+import { shiftFor, zoneShift } from '../lib/prayer';
 import type { Lang } from '../lib/text';
 
 const KEY = 'afnon-prefs';
@@ -19,6 +19,9 @@ export function savePrefs(p: Prefs) {
   try { localStorage.setItem(KEY, JSON.stringify(p)); } catch { /* private mode: this visit only */ }
 }
 
+const tickers: (() => void)[] = [];
+let timer = 0;
+
 export function bind(root: ParentNode, m: Model) {
   for (const el of root.querySelectorAll<HTMLElement>('[data-k]')) {
     const v = m.html[el.dataset.k!];
@@ -34,8 +37,8 @@ export function bind(root: ParentNode, m: Model) {
  * Runs `model` every second for this page's language and test mode (`data-mode` on the stage), the clock
  * shifted as the app's test intents do. Returns a function that re-renders at once (after a prefs change).
  */
-export function live(model: (c: Ctx) => Model, onTick?: (c: Ctx) => void) {
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+export function live(model: (c: Ctx) => Model, onTick?: (c: Ctx) => void, stageEl?: HTMLElement) {
+  const stage = stageEl ?? document.querySelector<HTMLElement>('.tv')!;
   const lang = document.documentElement.lang as Lang;
   const mode = stage.dataset.mode || undefined;
   let prefs = loadPrefs();
@@ -43,12 +46,17 @@ export function live(model: (c: Ctx) => Model, onTick?: (c: Ctx) => void) {
   const shiftOf = () => (mode && import.meta.env.PUBLIC_TARGET !== 'tizen' ? shiftFor(mode, prefs) : 0);
   let shift = shiftOf();
   const render = () => {
-    const c = makeCtx(lang, prefs, new Date(Date.now() + shift), mode);
+    // The Tizen root holds every screen: only the one in view is drawn.
+    if (stage.closest('[hidden]')) return;
+    const c = makeCtx(lang, prefs, new Date(Date.now() + shift + zoneShift(prefs)), mode);
     bind(stage, model(c));
     onTick?.(c);
   };
   render();
-  setInterval(render, 1000);
+  tickers.push(render);
+  if (!timer) timer = window.setInterval(() => tickers.forEach((f) => f()), 1000);
+  const show = () => render();
+  stage.addEventListener('afnon:show', show);
   return (p?: Prefs) => {
     if (p) { prefs = p; savePrefs(p); shift = shiftOf(); }
     render();

@@ -62,20 +62,20 @@ function duck(on: boolean) {
   onChange: (f: Listener) => { listeners.push(f); },
 };
 
+let onHome = true; // the app document says which screen is showing
 function paint() {
-  let home = false;
-  try { home = /(^|\/)(home|en)\.html/.test(view.contentWindow!.location.pathname); } catch (e) { /* cross-origin in a plain browser */ }
-  mini.hidden = !playing || home;
+  mini.hidden = !playing || onHome;
   if (!mini.hidden) mini.textContent = '\u266B ' + current.name + (ducked ? ' \u00B7 \u23F8' : '');
 }
 
 // First page: the language the viewer last used.
 let l = 'ar';
 try { l = localStorage.getItem('afnon-lang') === 'en' ? 'en' : 'ar'; } catch (e) { /* Arabic */ }
-view.src = (l === 'en' ? 'en' : 'home') + '.html#tv';
+view.src = (l === 'en' ? 'en' : 'home') + '.html';
 view.addEventListener('load', () => {
   const w = view.contentWindow!;
   w.focus();
+  onHome = true;
   paint();
 });
 document.addEventListener('keydown', () => view.contentWindow && view.contentWindow.focus(), true);
@@ -83,6 +83,7 @@ document.addEventListener('keydown', () => view.contentWindow && view.contentWin
 // A page showing live video (an HDMI input) asks this page to stop painting, so the video behind it is seen.
 window.addEventListener('message', (e) => {
   const d = e.data;
+  if (d && d.afnon === 'screen') { onHome = d.name === 'home'; paint(); return; }
   if (!d || d.afnon !== 'clear') return;
   document.documentElement.classList.toggle('watching', !!d.on);
   mini.style.visibility = d.on ? 'hidden' : '';

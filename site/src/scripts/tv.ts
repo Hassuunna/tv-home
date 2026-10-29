@@ -3,22 +3,27 @@
 // The key hints along the bottom follow focus: each focusable (or its container) carries data-hints (JSON).
 import 'spatial-navigation-polyfill';
 
-const frame = document.querySelector<HTMLElement>('.tv-frame');
-const stage = document.querySelector<HTMLElement>('.tv');
+// The Tizen build holds every screen in one document (the others hidden): `stage` is the one in view.
+const stages = [...document.querySelectorAll<HTMLElement>('.tv-frame > .tv')];
+const stageNow = () => document.querySelector<HTMLElement>('.tv-frame:not([hidden]) > .tv');
 
-if (frame && stage) {
+if (stages.length) {
+  let stage = stageNow() ?? stages[0];
   const visible = (e: HTMLElement) => e.getClientRects().length > 0;
   const start = () => stage.querySelector<HTMLElement>('[data-focus-start]')?.focus({ preventScroll: true });
 
-  const hintsOut = stage.querySelector<HTMLElement>('[data-hints-out]');
-  const showHints = (from: Element | null) => {
-    if (!hintsOut) return;
-    const src = from?.closest<HTMLElement>('[data-hints]') ?? stage.querySelector<HTMLElement>('[data-focus-start]');
-    const list: string[] = src?.dataset.hints ? JSON.parse(src.dataset.hints) : [];
-    hintsOut.replaceChildren(...list.map((h) => Object.assign(document.createElement('span'), { textContent: h })));
-  };
-  stage.addEventListener('focusin', (e) => showHints(e.target as Element));
-  showHints(null);
+  for (const st of stages) {
+    const hintsOut = st.querySelector<HTMLElement>('[data-hints-out]');
+    const showHints = (from: Element | null) => {
+      if (!hintsOut) return;
+      const src = from?.closest<HTMLElement>('[data-hints]') ?? st.querySelector<HTMLElement>('[data-focus-start]');
+      const list: string[] = src?.dataset.hints ? JSON.parse(src.dataset.hints) : [];
+      hintsOut.replaceChildren(...list.map((h) => Object.assign(document.createElement('span'), { textContent: h })));
+    };
+    st.addEventListener('focusin', (e) => showHints(e.target as Element));
+    showHints(null);
+    st.addEventListener('afnon:show', () => { stage = st; });
+  }
 
   // Arrow keys: the first press anywhere on the page wakes the TV at its default focus; after that they move
   // focus inside the TV (the polyfill's search, its own key handling off) and never scroll the page.
@@ -50,7 +55,8 @@ if (frame && stage) {
     }
   });
 
-  stage.addEventListener('keydown', (e) => {
+  window.addEventListener('keydown', (e) => {
+    if (!stage.contains(e.target as Node)) return;
     if (e.key === 'Escape' || e.key === 'Backspace') {
       const close = [...stage.querySelectorAll<HTMLElement>('[data-back]')].find((b) => visible(b) || visible(b.parentElement!))
         ?? stage.querySelector<HTMLElement>('[data-home]');
@@ -58,7 +64,8 @@ if (frame && stage) {
     }
   });
 
-  stage.addEventListener('pointerover', (e) => {
+  window.addEventListener('pointerover', (e) => {
+    if (!stage.contains(e.target as Node)) return;
     const t = (e.target as HTMLElement).closest<HTMLElement>('a[href], button, [tabindex]');
     if (t && stage.contains(t) && document.activeElement !== t && t.tabIndex >= 0) t.focus({ preventScroll: true });
   });

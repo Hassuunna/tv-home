@@ -1,5 +1,9 @@
 /* The TV shows the 1920x1080 stage at scale 1, with no preview chrome around it. */
-html, body.tizen { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; background: linear-gradient(rgba(36, 58, 43, 0.3), rgba(36, 58, 43, 0.45)), url(assets/bg/tulip.jpg) center / cover no-repeat #4a5a4c; }
+/* The one painted ground: the tulip photo with its green wash, on the root only. Everything above is transparent. */
+html { background: linear-gradient(rgba(36, 58, 43, 0.3), rgba(36, 58, 43, 0.45)), url(assets/bg/tulip.jpg) center / cover no-repeat #4a5a4c; }
+html, body.tizen { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; }
+body.tizen { background: transparent; }
+body.tizen .tv-frame, body.tizen .tv:not([data-ground=black]) { background: transparent; }
 body.tizen .tv-wrap { margin: 0; padding: 0; width: 1920px; height: 1080px; max-width: none; }
 body.tizen .tv-frame { position: fixed; inset: 0; width: 1920px; height: 1080px; border-radius: 0; outline: 0; border: 0; box-shadow: none; aspect-ratio: auto; overflow: hidden; }
 body.tizen .tv { --k: 1; transform: none; left: 0; top: 0; }
@@ -38,12 +42,11 @@ body.tizen .tv[data-screen=home] .when { inset-inline-start: 136px; width: 520px
 body.tizen .tv[data-screen=home] .when .clock { font-family: var(--font-family-ui); font-weight: 500; font-size: 76px; line-height: 1.1; }
 body.tizen .tv[data-screen=home] .when .hdate { font-size: 26px; margin-top: 10px; }
 body.tizen .tv[data-screen=home] .when .gdate { display: none; }
-body.tizen .tv[data-screen=home] .ref, body.tizen .tv[data-screen=home] .rule { display: none; }
 body.tizen .tv[data-screen=home] .info { top: 450px !important; }
 body.tizen .tv[data-screen=home] .info .sub, body.tizen .tv[data-screen=home] .info .sub2 { display: none; }
 body.tizen .tv[data-screen=home] .verse { inset-inline-start: 126px; width: 540px; top: 770px; text-align: center; }
-body.tizen .tv[data-screen=home] .verse p { font-size: 32px; line-height: 1.5; text-align: center; margin: 0; white-space: nowrap; }
-body.tizen .tv[data-screen=home] .verse small { display: block; margin-top: 6px; font-size: 22px !important; }
+body.tizen .tv[data-screen=home] .verse p { font-size: 26px; line-height: 1.5; text-align: center; margin: 0; white-space: nowrap; }
+body.tizen .tv[data-screen=home] .verse small { display: block; margin-top: 6px; font-size: 22px; color: var(--color-mist-400); }
 
 html.watching, html.watching body, html.watching .tv-frame { background: transparent !important; }
 
@@ -59,11 +62,15 @@ body.tizen {
   --color-gold-400-60: rgba(230, 189, 82, 0.6);
   --color-banner-track: rgba(230, 189, 82, 0.25);
   --color-seg-track-focused: rgba(36, 58, 43, 0.15);
+  --font-family-display-en: Alexandria, sans-serif; --font-family-display-ar: Alexandria, sans-serif; --font-family-sacred: Alexandria, sans-serif;
+  --color-scrim: rgba(27, 45, 33, 0.6);
   --color-scrim-menu: rgba(36, 58, 43, 0.92);
+  --color-scrim-panel: rgba(27, 45, 33, 0.7);
+  --color-mist-400: #b4c4b0;
+  --color-disabled-text: #8a9d88;
+  --color-bell-off-border: rgba(180, 196, 176, 0.4);
+  --color-on-plaster-secondary: #3f5444;
   --color-on-plaster-border: rgba(36, 58, 43, 0.6);
   --color-on-plaster-button-border: rgba(36, 58, 43, 0.35);
-}
-body.tizen .tv:not([data-ground=black]) {
-  background: linear-gradient(rgba(36, 58, 43, 0.3), rgba(36, 58, 43, 0.45)), url(assets/bg/tulip.jpg) center / cover no-repeat #4a5a4c;
 }
 body.tizen .tv .lattice { display: none; }

@@ -1,9 +1,9 @@
-// Home extras in Afnon's own look: the weather for the prayer city, and a soft glow tinted by the focused app.
+// Home extras in Afnon's own look: the weather for the prayer city (once a day), and a soft glow tinted by the focused app.
 import { hasTizen, lang, loadPrefs, stage, textFor } from './host';
 import { cityOf } from '../../site/src/lib/data';
 
-const KEY = 'afnon-wx', TTL = 15 * 60000;
-type Wx = { t: number; temp: number; hi: number; lo: number; code: number; at: number };
+const KEY = 'afnon-wx';
+type Wx = { t: number; day: string; temp: number; hi: number; lo: number; code: number; at: number };
 
 // WMO weather codes grouped to words and one glyph each.
 const GROUPS: [number[], string, string, string][] = [
@@ -13,12 +13,15 @@ const GROUPS: [number[], string, string, string][] = [
 ];
 const word = (code: number) => GROUPS.filter((g) => g[0].indexOf(code) >= 0)[0] || GROUPS[2];
 
+const today = () => new Date().toDateString();
+
 function read(): Wx | null { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
 
 function fetchWx(done: (w: Wx | null) => void) {
   const c = cityOf(loadPrefs());
   const cached = read();
-  if (cached && Date.now() - cached.t < TTL && cached.at === c.lat + c.lng) return done(cached);
+  // The TV stays where it is: one fetch a day for the chosen city.
+  if (cached && cached.day === today() && cached.at === c.lat + c.lng) return done(cached);
   const x = new XMLHttpRequest();
   x.open('GET', 'https://api.open-meteo.com/v1/forecast?latitude=' + c.lat + '&longitude=' + c.lng +
     '&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1');
@@ -26,7 +29,7 @@ function fetchWx(done: (w: Wx | null) => void) {
   x.onload = () => {
     try {
       const j = JSON.parse(x.responseText);
-      const w: Wx = { t: Date.now(), temp: j.current.temperature_2m, code: j.current.weather_code, hi: j.daily.temperature_2m_max[0], lo: j.daily.temperature_2m_min[0], at: c.lat + c.lng };
+      const w: Wx = { t: Date.now(), day: today(), temp: j.current.temperature_2m, code: j.current.weather_code, hi: j.daily.temperature_2m_max[0], lo: j.daily.temperature_2m_min[0], at: c.lat + c.lng };
       try { localStorage.setItem(KEY, JSON.stringify(w)); } catch (e) { /* no cache */ }
       done(w);
     } catch (e) { done(cached); }
@@ -35,9 +38,9 @@ function fetchWx(done: (w: Wx | null) => void) {
   x.send();
 }
 
-export function weather() {
-  const st = stage();
-  if (!st) return;
+export function weather(): () => void {
+  const st = stage('home');
+  if (!st) return () => {};
   const t = textFor(), ar = lang() === 'ar';
   const el = document.createElement('div');
   el.className = 'wx';
@@ -50,7 +53,9 @@ export function weather() {
     el.hidden = false;
   };
   paint(read());
-  if (hasTizen() || /[?&]wx\b/.test(location.search)) { fetchWx(paint); window.setInterval(() => fetchWx(paint), TTL); }
+  const refresh = () => { if (hasTizen() || /[?&]wx\b/.test(location.search)) fetchWx(paint); };
+  refresh();
+  return refresh;
 }
 
 // The glow: one soft radial gradient behind the tile in focus, tinted by the app's brand colour. Opacity and
@@ -61,7 +66,7 @@ const TINT: [RegExp, string][] = [
   [/yango/i, '170,60,220'],
 ];
 export function glow() {
-  const st = stage();
+  const st = stage('home');
   if (!st) return;
   const g = document.createElement('div');
   g.className = 'glow';
@@ -77,30 +82,4 @@ export function glow() {
     g.style.opacity = '1';
   });
   st.addEventListener('focusout', () => { g.style.opacity = '0'; });
-}
-
-/** Home: the verse becomes one line under the rows, and the reference joins it (the clock moves into the mihrab in CSS). */
-export function tidyHome() {
-  const st = stage();
-  if (!st) return;
-  const p = st.querySelector<HTMLElement>('.verse p');
-  const ref = st.querySelector<HTMLElement>('.ref');
-  st.querySelectorAll('a.more:not(.all)').forEach((a) => a.remove());
-  if (!p) return;
-  const brs = p.querySelectorAll('br');
-  brs.forEach((br) => br.replaceWith(' '));
-  if (ref) {
-    const r = document.createElement('small');
-    r.textContent = ' ' + (ref.textContent || '');
-    r.style.cssText = 'color:var(--color-mist-400);font-family:inherit';
-    p.appendChild(r);
-  }
-  // One line: shrink the text to fit the width under the mihrab.
-  const fit = () => {
-    let size = 32;
-    p.style.fontSize = size + 'px';
-    while (p.scrollWidth > 540 && size > 18) { size -= 1; p.style.fontSize = size + 'px'; }
-  };
-  fit();
-  new MutationObserver(fit).observe(p, { childList: true, characterData: true, subtree: true });
 }
