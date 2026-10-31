@@ -212,14 +212,14 @@ if (hasTizen() || /[?&]watch\b/.test(location.search)) { watch(); window.setInte
 
 // ------------------------------------------------------------------ the screensaver, after idle on Home
 // There is no Android Dream here. After ten idle minutes on Home (and no radio playing) the dim page opens;
-// any key brings Home back.
+// any key brings Home back. Never while an HDMI input is on screen (the page is clear then; nothing says if the video plays).
 {
   let idle = 0;
   const arm = () => {
     clearTimeout(idle);
     idle = window.setTimeout(() => {
       const st = stage('home');
-      if (screen() === 'home' && st && !st.classList.contains('radio-on')) open(href('screensaver', lang()));
+      if (screen() === 'home' && st && !st.classList.contains('radio-on') && !document.documentElement.classList.contains('watching')) open(href('screensaver', lang()));
     }, 10 * 60000);
   };
   ['keydown', 'pointermove', 'pointerdown'].forEach((n) => window.addEventListener(n, arm, true));
