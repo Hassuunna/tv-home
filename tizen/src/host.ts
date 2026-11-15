@@ -128,6 +128,7 @@ function watch(src: Source, back: HTMLElement | null) {
     document.removeEventListener('tizenhwkey', leave);
     window.removeEventListener('appcontrol', leave);
     window.clearInterval(poll);
+    window.clearInterval(lost);
     try { tizen.tvwindow.hide(() => {}, () => {}, 'MAIN'); } catch (e) { /* already hidden */ }
     clear(false);
     catcher.remove();
@@ -153,6 +154,14 @@ function watch(src: Source, back: HTMLElement | null) {
     if (armed && cur && !polled) leave();
     polled = cur;
   }, 400);
+  // Unplugging the cable leaves a black screen the TV draws itself: notice it and come back to Afnon.
+  const lost = window.setInterval(() => {
+    if (!armed) return;
+    readSources((all) => {
+      const s = all.filter((v) => v.number === src.number)[0];
+      if (s && !s.connected && armed) { done(); say(t.ar ? 'انقطع HDMI ' + src.number : 'HDMI ' + src.number + ' was disconnected'); }
+    }, () => {});
+  }, 2000);
   const fail = () => { done(); say(t.ar ? 'تعذّر فتح المدخل' : 'Could not open the input'); sourceMenu(); };
   try {
     tizen.tvwindow.setSource(src.native, () => {

@@ -132,6 +132,19 @@ document.addEventListener('visibilitychange', () => {
   hiddenAt = 0;
 });
 
+// After standby or a long radio session the remote can find nothing focused; give the keys a target again.
+const regain = () => {
+  if (document.hidden || document.documentElement.classList.contains('watching')) return;
+  const cur = document.activeElement as HTMLElement | null;
+  if (cur && cur !== document.body && !cur.hidden && cur.offsetParent !== null) return;
+  const start = stage()?.querySelector<HTMLElement>('[data-focus-start], .fav, button, a[href]');
+  if (start) start.focus({ preventScroll: true });
+};
+document.addEventListener('visibilitychange', regain);
+window.addEventListener('focus', regain);
+window.addEventListener('message', (e) => { if (e.data && e.data.afnon === 'wake') regain(); });
+window.addEventListener('keydown', regain, true);
+
 // ------------------------------------------------------------------ the call, while the launcher is in front
 // An app cannot draw over other apps or run in the background on Tizen: the adhan and the call screen come only
 // while Afnon itself is the foreground app. One timer, as in the Android app.

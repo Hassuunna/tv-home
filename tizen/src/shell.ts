@@ -80,6 +80,20 @@ view.addEventListener('load', () => {
 });
 document.addEventListener('keydown', () => view.contentWindow && view.contentWindow.focus(), true);
 
+// Back from standby or from another app: the radio stream may have died quietly and the keys may have no focus.
+const wake = () => {
+  if (document.hidden) return;
+  if (view.contentWindow) { view.contentWindow.focus(); view.contentWindow.postMessage({ afnon: 'wake' }, '*'); }
+  if (playing && !ducked && av) {
+    let state = '';
+    try { state = webapis.avplay.getState(); } catch (e) { /* closed */ }
+    if (state !== 'PLAYING' && state !== 'PAUSED') play(current.url, current.name);
+  }
+};
+document.addEventListener('visibilitychange', wake);
+window.addEventListener('focus', wake);
+window.addEventListener('appcontrol', wake);
+
 // A page showing live video (an HDMI input) asks this page to stop painting, so the video behind it is seen.
 window.addEventListener('message', (e) => {
   const d = e.data;
