@@ -52,14 +52,14 @@ export function installed(cb: (apps: App[]) => void) {
   }, () => cb([hdmi]));
 }
 
-/** Favourites (up to 5, in order) and the rest, from the saved choice or the defaults. */
+/** Favourites (up to 10, in order) and the rest, from the saved choice or the defaults. */
 export function arrange(apps: App[]) {
   const by: Record<string, App> = {};
   apps.forEach((a) => { by[a.id] = a; });
   const saved = loadFavs();
   let favIds = (saved || DEFAULT_FAVS).filter((id) => by[id]);
   // Only the defaults are topped up; a list the viewer chose (even a short one) is kept as it is.
-  for (let i = 0; !saved && favIds.length < FAV_MAX && i < apps.length; i++) if (favIds.indexOf(apps[i].id) < 0) favIds.push(apps[i].id);
+  for (let i = 0; !saved && favIds.length < FAV_ROW && i < apps.length; i++) if (favIds.indexOf(apps[i].id) < 0) favIds.push(apps[i].id);
   favIds = favIds.slice(0, FAV_MAX);
   const rest = apps.filter((a) => favIds.indexOf(a.id) < 0);
   rest.sort((a, b) => {
@@ -103,9 +103,13 @@ export function homeApps(apps: App[]) {
     for (let n = have; n < FAV_MAX; n++) last.parentNode!.insertBefore(last.cloneNode(true), last.nextSibling);
   }
   const favEls = st.querySelectorAll<HTMLElement>('.fav');
+  // Five to a row; a last row that is not full is centred under the rows above.
+  const rows = Math.ceil(favs.length / FAV_ROW);
   favEls.forEach((el, i) => {
+    const row = Math.floor(i / FAV_ROW), inRow = Math.min(FAV_ROW, favs.length - row * FAV_ROW);
     el.style.width = '200px';
-    el.style.insetInlineStart = 'calc(var(--layout-courtyard-inset-inline-start) + ' + i * 216 + 'px)';
+    el.style.insetInlineStart = 'calc(var(--layout-courtyard-inset-inline-start) + ' + ((i % FAV_ROW) + (FAV_ROW - inRow) / 2) * 216 + 'px)';
+    if (rows > 1) { el.style.top = (520 + row * 146) + 'px'; el.style.height = '130px'; }
   });
   favEls.forEach((el, i) => {
     const app = favs[i];
@@ -147,7 +151,19 @@ export function homeApps(apps: App[]) {
     el.textContent = app.name;
   });
   const all = st.querySelector<HTMLElement>('.all');
-  if (all) {
+  if (rows > 1) {
+    // Two rows of favourites leave no room for More: only the All apps tile stays, below them.
+    moreEls.forEach((el) => { el.hidden = true; });
+    const ml = st.querySelector<HTMLElement>('.more-label');
+    if (ml) ml.hidden = true;
+    if (all) { all.style.top = (520 + (rows - 1) * 146 + 150) + 'px'; all.style.height = '84px'; }
+  }
+  if (all && rows > 1) {
+    all.textContent = t.all(apps.length);
+    all.style.whiteSpace = 'nowrap';
+    all.style.width = 'calc(2 * ((var(--layout-courtyard-width) - 5 * var(--layout-gap-more)) / 6) + var(--layout-gap-more))';
+    all.style.insetInlineStart = 'calc(var(--layout-courtyard-inset-inline-start) + (var(--layout-courtyard-width) - 2 * ((var(--layout-courtyard-width) - 5 * var(--layout-gap-more)) / 6) - var(--layout-gap-more)) / 2)';
+  } else if (all) {
     all.textContent = t.all(apps.length);
     all.style.whiteSpace = 'nowrap';
     all.style.width = 'calc(2 * ((var(--layout-courtyard-width) - 5 * var(--layout-gap-more)) / 6) + var(--layout-gap-more))';
@@ -280,4 +296,5 @@ export function appsScreen(apps: App[]) {
 }
 
 const FAV_COUNT = 4;
-const FAV_MAX = 5; // Home fits five 200px tiles in the courtyard width
+const FAV_ROW = 5; // Home fits five 200px tiles in the courtyard width
+const FAV_MAX = 10; // two rows
