@@ -102,10 +102,15 @@ const menuText = {
       from = tile;
       text = JSON.parse(menu.dataset.text!); // a host (the Tizen build) may rewrite it for its own apps
       const fav = Number(tile.dataset.fav);
-      const items: string[] = [];
-      if (fav > 1) items.push(text.earlier);
-      if (fav && fav < 4) items.push(text.later);
-      if (!fav) items.push(...text.instead);
+      const favCount = stage.querySelectorAll('.tile:not([data-fav="0"])').length;
+      // A host may add "remove" and "add" (the Tizen build, where the number of favourites is not fixed at four).
+      const acts: { label: string; action: string; slot: number }[] = [];
+      if (fav > 1) acts.push({ label: text.earlier, action: 'earlier', slot: 0 });
+      if (fav && fav < favCount) acts.push({ label: text.later, action: 'later', slot: 0 });
+      if (fav && text.remove) acts.push({ label: text.remove, action: 'remove', slot: 0 });
+      if (!fav && text.add) acts.push({ label: text.add, action: 'add', slot: 0 });
+      if (!fav) text.instead.forEach((label: string, slot: number) => acts.push({ label, action: 'instead', slot }));
+      const items = acts.map((x) => x.label);
       $('[data-menu-title]').textContent = tile.dataset.name!;
       $('[data-menu-items]').replaceChildren(...[...items, text.cancel].map((label, i, all) => {
         const b = document.createElement('button');
@@ -122,8 +127,7 @@ const menuText = {
           closeMenu();
           if (i === all.length - 1) return;
           // A host can arrange favourites for real: it cancels this event. Otherwise the preview only says so.
-          const action = fav ? (fav > 1 && i === 0 ? 'earlier' : 'later') : 'instead';
-          const arrange = new CustomEvent('arrange', { cancelable: true, detail: { app: Number(tileFrom.dataset.app), action, slot: i } });
+          const arrange = new CustomEvent('arrange', { cancelable: true, detail: { app: Number(tileFrom.dataset.app), action: acts[i].action, slot: acts[i].slot } });
           if (stage.dispatchEvent(arrange)) say(text.done);
         });
         return b;

@@ -52,12 +52,14 @@ export function installed(cb: (apps: App[]) => void) {
   }, () => cb([hdmi]));
 }
 
-/** Favourites (up to 4, in order) and the rest, from the saved choice or the defaults. */
+/** Favourites (up to 5, in order) and the rest, from the saved choice or the defaults. */
 export function arrange(apps: App[]) {
   const by: Record<string, App> = {};
   apps.forEach((a) => { by[a.id] = a; });
-  let favIds = (loadFavs() || DEFAULT_FAVS).filter((id) => by[id]);
-  for (let i = 0; favIds.length < FAV_MAX && i < apps.length; i++) if (favIds.indexOf(apps[i].id) < 0) favIds.push(apps[i].id);
+  const saved = loadFavs();
+  let favIds = (saved || DEFAULT_FAVS).filter((id) => by[id]);
+  // Only the defaults are topped up; a list the viewer chose (even a short one) is kept as it is.
+  for (let i = 0; !saved && favIds.length < FAV_MAX && i < apps.length; i++) if (favIds.indexOf(apps[i].id) < 0) favIds.push(apps[i].id);
   favIds = favIds.slice(0, FAV_MAX);
   const rest = apps.filter((a) => favIds.indexOf(a.id) < 0);
   rest.sort((a, b) => {
@@ -237,9 +239,11 @@ export function appsScreen(apps: App[]) {
 
   st.addEventListener('arrange', (e) => {
     const d = (e as CustomEvent).detail as { app: number; action: string; slot: number };
-    const favIds = order.slice(0, Math.min(4, order.length)).map((a) => a.id);
+    const favIds = order.slice(0, arrange(apps).favs.length).map((a) => a.id);
     const id = order[d.app].id;
     if (d.action === 'instead') favIds[d.slot] = id;
+    else if (d.action === 'add') { if (favIds.length < FAV_MAX) favIds.push(id); }
+    else if (d.action === 'remove') { if (favIds.length > 1) favIds.splice(favIds.indexOf(id), 1); }
     else {
       const at = favIds.indexOf(id), to = d.action === 'earlier' ? at - 1 : at + 1;
       if (at < 0 || to < 0 || to >= favIds.length) return;
@@ -258,7 +262,10 @@ export function appsScreen(apps: App[]) {
   const refreshMenu = () => {
     if (!menu) return;
     const text = JSON.parse(menu.dataset.text!);
-    text.instead = order.slice(0, 4).map((a) => t.s('putInPlaceOf', { app: a.name }));
+    const nf = arrange(apps).favs.length;
+    text.instead = order.slice(0, nf).map((a) => t.s('putInPlaceOf', { app: a.name }));
+    text.add = nf < FAV_MAX ? (t.ar ? 'أضف إلى المفضلة' : 'Add to favourites') : '';
+    text.remove = t.ar ? 'أزل من المفضلة' : 'Remove from favourites';
     text.done = t.ar ? 'تم ترتيب المفضلة' : 'Favourites updated';
     menu.dataset.text = JSON.stringify(text);
   };

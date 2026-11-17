@@ -15,6 +15,7 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 - Tizen: every screen of a language lives in one document (`home.html`, `en.html`) and Home/Settings/Apps/Prayer day/Call/Screensaver swap in place, so the tulip photo and scripts load once and moving between screens no longer flashes; a Time zone setting (Auto, UTC+2, UTC+3) fixes a TV clock that is off around Egypt's daylight-saving change; prayer times are worked out once a day; weather is fetched once a day; one typeface (Alexandria); the call screen no longer turns blue.
 - Tizen: the screensaver no longer starts while an HDMI input is on screen (the TV can't tell us if the video is playing).
 - Tizen: unplugging the HDMI cable while watching it returns to Afnon with a notice; after standby or a long radio session the launcher regains remote focus and restarts a radio stream that died.
+- Tizen: the hold-OK menu in All apps can add an app to the favourites (up to five) and remove one, instead of only replacing; a favourites list you chose is no longer topped up with other apps.
 - Calculation method «وزارة الأوقاف والشؤون الدينية، سلطنة عُمان» (Oman Ministry of Awqaf): Fajr and Isha at 18°, Asr
   by the standard shadow, +5 minutes on Dhuhr, Asr and Maghrib. The ministry publishes no parameters, so they were
   fitted to its own timetable (mara.gov.om/arabic/calendar_page1.asp): across 15 Omani cities and 2026 every prayer
