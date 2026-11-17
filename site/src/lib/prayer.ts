@@ -41,23 +41,38 @@ export function hijriOf(date: Date, offsetDays = 0) {
   return { day: get('day'), month: get('month') - 1, year: get('year') };
 }
 
+/** Milliseconds to add to the TV's clock so it reads Cairo's wall time (pref `tz`; 'auto' trusts the TV). */
+export function zoneShift(prefs: Prefs, at = new Date()) {
+  return !prefs.tz || prefs.tz === 'auto' ? 0 : (Number(prefs.tz) * 60 + at.getTimezoneOffset()) * 60000;
+}
+
+// The six times and tomorrow's Fajr are worked out once per day and setting, then reused by every tick.
+let memo: { key: string; base: Date[]; tomorrow: Date } | null = null;
+
 export type PrayerDay = ReturnType<typeof prayerDay>;
 
 /** One moment's view of the prayer day: the six times, the current prayer and the next. */
 export function prayerDay(now: Date, prefs: Prefs) {
   const city = cityOf(prefs);
   const where = new Coordinates(city.lat, city.lng);
-  const params = methodParams(methodOf(prefs));
-  params.madhab = prefs.hanafi ? Madhab.Hanafi : Madhab.Shafi;
-  const at = (d: Date) => new PrayerTimes(where, d, params);
-  const today = at(now);
-  const times = [today.fajr, today.sunrise, today.dhuhr, today.asr, today.maghrib, today.isha].map(minute);
+  const key = [now.getFullYear(), now.getMonth(), now.getDate(), city.id, methodOf(prefs), prefs.hanafi, zoneShift(prefs, now)].join('|');
+  if (!memo || memo.key !== key) {
+    const params = methodParams(methodOf(prefs));
+    params.madhab = prefs.hanafi ? Madhab.Hanafi : Madhab.Shafi;
+    const at = (d: Date) => new PrayerTimes(where, d, params);
+    const today = at(now);
+    // Instants come out in real time; with a zone set, `now` is already shifted, so they are shifted with it.
+    const shift = zoneShift(prefs, now);
+    const sh = (d: Date) => minute(new Date(d.getTime() + shift));
+    memo = { key, base: [today.fajr, today.sunrise, today.dhuhr, today.asr, today.maghrib, today.isha].map(sh), tomorrow: sh(at(addDays(now, 1)).fajr) };
+  }
+  const times = memo.base.slice();
 
   let latest = -1;
   times.forEach((t, i) => { if (t <= now) latest = i; });
   const nowIndex = latest === SUNRISE ? -1 : latest;
   let next = times.findIndex((t, i) => i !== SUNRISE && t > now);
-  const tomorrowFajr = minute(at(addDays(now, 1)).fajr);
+  const tomorrowFajr = memo.tomorrow;
   if (next === -1) { next = FAJR; times[FAJR] = tomorrowFajr; }
   const h = hijriOf(now, prefs.hijriOffset);
   return {

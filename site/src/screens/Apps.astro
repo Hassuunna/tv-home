@@ -70,9 +70,9 @@ const menuText = {
   import { live } from '../scripts/live';
   import { appsModel } from './apps';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="apps"]')!;
   if (stage.dataset.screen === 'apps') {
-    live(appsModel);
+    live(appsModel, undefined, stage);
 
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => stage.querySelector<T>(s)!;
     const name = $('[data-info-name]'), note = $('[data-info-note]');
@@ -95,16 +95,22 @@ const menuText = {
 
     // The menu: for a favourite, move earlier/later; otherwise put it in place of one; always cancel.
     const menu = $('[data-menu]');
-    const text = JSON.parse(menu.dataset.text!);
+    let text = JSON.parse(menu.dataset.text!);
     let from: HTMLElement | null = null;
     const closeMenu = () => { menu.hidden = true; from?.focus({ preventScroll: true }); };
     const openMenu = (tile: HTMLElement) => {
       from = tile;
+      text = JSON.parse(menu.dataset.text!); // a host (the Tizen build) may rewrite it for its own apps
       const fav = Number(tile.dataset.fav);
-      const items: string[] = [];
-      if (fav > 1) items.push(text.earlier);
-      if (fav && fav < 4) items.push(text.later);
-      if (!fav) items.push(...text.instead);
+      const favCount = stage.querySelectorAll('.tile:not([data-fav="0"])').length;
+      // A host may add "remove" and "add" (the Tizen build, where the number of favourites is not fixed at four).
+      const acts: { label: string; action: string; slot: number }[] = [];
+      if (fav > 1) acts.push({ label: text.earlier, action: 'earlier', slot: 0 });
+      if (fav && fav < favCount) acts.push({ label: text.later, action: 'later', slot: 0 });
+      if (fav && text.remove) acts.push({ label: text.remove, action: 'remove', slot: 0 });
+      if (!fav && text.add) acts.push({ label: text.add, action: 'add', slot: 0 });
+      if (!fav) text.instead.forEach((label: string, slot: number) => acts.push({ label, action: 'instead', slot }));
+      const items = acts.map((x) => x.label);
       $('[data-menu-title]').textContent = tile.dataset.name!;
       $('[data-menu-items]').replaceChildren(...[...items, text.cancel].map((label, i, all) => {
         const b = document.createElement('button');
@@ -116,7 +122,14 @@ const menuText = {
         b.dataset.navUp = nth(Math.max(1, i));
         b.dataset.navDown = nth(Math.min(all.length, i + 2));
         b.dataset.navLeft = b.dataset.navRight = nth(i + 1);
-        b.addEventListener('click', () => { closeMenu(); if (i < all.length - 1) say(text.done); });
+        b.addEventListener('click', () => {
+          const tileFrom = from!;
+          closeMenu();
+          if (i === all.length - 1) return;
+          // A host can arrange favourites for real: it cancels this event. Otherwise the preview only says so.
+          const arrange = new CustomEvent('arrange', { cancelable: true, detail: { app: Number(tileFrom.dataset.app), action: acts[i].action, slot: acts[i].slot } });
+          if (stage.dispatchEvent(arrange)) say(text.done);
+        });
         return b;
       }));
       menu.hidden = false;
@@ -139,11 +152,11 @@ const menuText = {
       if (e.key !== 'Enter' || !holdTimer) return;
       clearTimeout(holdTimer);
       holdTimer = 0;
-      if (tile && !held) say(tile.dataset.toast!);
+      if (tile && !held) tile.dataset.launch ? tile.click() : say(tile.dataset.toast!);
     });
     stage.addEventListener('click', (e) => {
       const tile = (e.target as HTMLElement).closest<HTMLElement>('.tile');
-      if (tile && e.detail > 0) say(tile.dataset.toast!);
+      if (tile && e.detail > 0 && !tile.dataset.launch) say(tile.dataset.toast!);
     });
     stage.addEventListener('contextmenu', (e) => {
       const tile = (e.target as HTMLElement).closest<HTMLElement>('.tile');

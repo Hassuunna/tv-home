@@ -9,14 +9,14 @@ import Settings from '../screens/Settings.astro';
 import Call from '../screens/Call.astro';
 import Screensaver from '../screens/Screensaver.astro';
 import { buildCtx } from '../lib/ctx';
-import { PAGES, type Page } from '../lib/site';
+import { PAGES, TIZEN, type Page } from '../lib/site';
 import type { Lang } from '../lib/text';
 
 export function getStaticPaths() {
   return PAGES.flatMap((page) =>
     (['ar', 'en'] as Lang[]).map((lang) => {
       const parts = [lang === 'en' ? 'en' : '', page.slug].filter(Boolean);
-      return { params: { path: parts.length ? parts.join('/') : undefined }, props: { page, lang } };
+      return { params: { path: parts.length ? parts.join(TIZEN ? '-' : '/') : undefined }, props: { page, lang } };
     }),
   );
 }

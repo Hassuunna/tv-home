@@ -91,7 +91,7 @@ const dial = (needle: string, north: string, a: Record<string, Record<string, st
   import { prayerDayModel, pickerModel, loadBells, saveBells, loadFacing, saveFacing } from './prayer-day';
   import type { Ctx } from '../lib/ctx';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="prayer-day"]')!;
   if (stage.dataset.screen === 'prayer-day') {
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => stage.querySelector<T>(s)!;
     const rows = [...stage.querySelectorAll<HTMLElement>('[data-row]')];
@@ -107,7 +107,7 @@ const dial = (needle: string, north: string, a: Record<string, Record<string, st
         nextIndex = c.day.nextIndex;
         rows.forEach((r, i) => r.toggleAttribute('data-focus-start', i === nextIndex));
       }
-    });
+    }, stage);
 
     // OK on a row turns its adhan on or off. Focus on a row is remembered for Left/Right from the room button.
     rows.forEach((r, i) => {

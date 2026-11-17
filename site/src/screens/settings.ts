@@ -4,6 +4,7 @@ import voicesJson from '../data/adhans.json';
 import type { Ctx } from '../lib/ctx';
 import { CITIES, METHODS, REGIONS, STATIONS, cityOf, methodOf, stationOf, type Prefs, type Station } from '../lib/data';
 import { ASR, clock, dayAdjustment, hijri, methodParams } from '../lib/prayer';
+import { TIZEN } from '../lib/site';
 import type { Text } from '../lib/text';
 import { loadFacing } from './prayer-day';
 
@@ -61,6 +62,7 @@ export const REMIND = [5, 10, 15, 20, 30, 0];
 const remindIndex = (p: SPrefs) => (REMIND.indexOf(p.remind) < 0 ? 2 : REMIND.indexOf(p.remind));
 const DARK = [0, 15, -1];
 const CLOCKS = ['system', '12', '24'] as const;
+const TZS = ['auto', '2', '3'] as const;
 
 export function rowsFor(c: Ctx, section: number, radioOn = false): Row[] {
   const { t } = c;
@@ -92,6 +94,7 @@ export function rowsFor(c: Ctx, section: number, radioOn = false): Row[] {
       { id: 'lang', kind: 'seg', label: t.s('language'), help: t.s('languageHelp'), segs: [t.ar ? 'التلفاز' : 'TV', 'العربية', 'English'], selected: t.ar ? 1 : 2 },
       { id: 'digits', kind: 'seg', label: t.s('digits'), help: '', segs: ['0123', '٠١٢٣'], selected: t.eastern ? 1 : 0 },
       { id: 'clock', kind: 'seg', label: t.s('clockRow'), help: t.s('clockHelp'), segs: t.list('clocks').map(t.d), selected: Math.max(0, CLOCKS.indexOf(p.clock)) },
+      ...(TIZEN ? [{ id: 'tz', kind: 'seg' as const, label: t.ar ? 'التوقيت' : 'Time zone', help: t.ar ? 'اختر +٢ أو +٣ إن كانت ساعة التلفاز خاطئة بعد تغيير التوقيت الصيفي' : 'Pick +2 or +3 if the TV clock is off after the daylight-saving change', segs: [t.ar ? 'تلقائي' : 'Auto', t.d('UTC+2'), t.d('UTC+3')], selected: Math.max(0, TZS.indexOf(p.tz ?? 'auto')) }] : []),
     ];
     case NETWORK: return [{ id: 'network', kind: 'value', label: t.s('networkRow'), help: t.s('networkHelp'), value: '' }];
     default: return [{ id: 'device', kind: 'value', label: t.s('deviceRow'), help: t.s('deviceHelp'), value: '' }];
@@ -124,6 +127,7 @@ export function pick(c: Ctx, id: string, i: number): SPrefs | null {
     case 'dark': return { ...p, radioDark: DARK[i] };
     case 'digits': return { ...p, digits: i === 1 ? 'eastern' : 'western' };
     case 'clock': return { ...p, clock: CLOCKS[i] };
+    case 'tz': return { ...p, tz: TZS[i] };
     default: return null;
   }
 }

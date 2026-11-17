@@ -29,9 +29,9 @@ const m = screensaverModel(ctx);
   import { live } from '../scripts/live';
   import { screensaverModel } from './screensaver';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="screensaver"]')!;
   if (stage.dataset.screen === 'screensaver') {
-    live(screensaverModel);
+    live(screensaverModel, undefined, stage);
     const wake = stage.querySelector<HTMLAnchorElement>('.wake')!;
     const group = stage.querySelector<HTMLElement>('[data-group]')!;
     // Any key wakes it, as on the TV (arrows included, once the screen has focus).
@@ -46,6 +46,7 @@ const m = screensaverModel(ctx);
     const fadeMs = () => parseFloat(getComputedStyle(group).transitionDuration) * 1000 || 0;
     place(1140, 250);
     window.setInterval(() => {
+      if (stage.closest('[hidden]')) return;
       group.style.opacity = '0';
       window.setTimeout(() => {
         place(96 + Math.random() * (1920 - 192 - 440), 56 + Math.random() * (1080 - 112 - 640));

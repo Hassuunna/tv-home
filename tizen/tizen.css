@@ -1,0 +1,76 @@
+/* The TV shows the 1920x1080 stage at scale 1, with no preview chrome around it. */
+/* The one painted ground: the tulip photo with its green wash, on the root only. Everything above is transparent. */
+html { background: linear-gradient(rgba(36, 58, 43, 0.3), rgba(36, 58, 43, 0.45)), url(assets/bg/tulip.jpg) center / cover no-repeat #4a5a4c; }
+html, body.tizen { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; }
+body.tizen { background: transparent; }
+body.tizen .tv-frame, body.tizen .tv:not([data-ground=black]) { background: transparent; }
+body.tizen .tv-wrap { margin: 0; padding: 0; width: 1920px; height: 1080px; max-width: none; }
+body.tizen .tv-frame { position: fixed; inset: 0; width: 1920px; height: 1080px; border-radius: 0; outline: 0; border: 0; box-shadow: none; aspect-ratio: auto; overflow: hidden; }
+body.tizen .tv { --k: 1; transform: none; left: 0; top: 0; }
+
+.wx { position: absolute; top: 40px; width: 560px; inset-inline-start: auto; color: var(--color-gold-200, #E8C675); direction: inherit; }
+.wx b { display: block; font-size: 46px; font-weight: 500; }
+.wx span { display: block; font-size: 24px; opacity: 0.85; margin-top: 4px; }
+.fav:focus img[src$=".svg"]:not([src*="color"]), .tile:focus img[src$=".svg"]:not([src*="color"]) { filter: invert(1); }
+.wx[hidden] { display: none; }
+.glow { position: absolute; left: 0; top: 0; width: 900px; height: 900px; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; will-change: transform, opacity; }
+.fav img[src$=".svg"], .tile img[src$=".svg"] { object-fit: contain; }
+
+html[dir=ltr] .wx { left: 100px; }
+html[dir=rtl] .wx { right: 100px; }
+
+[hidden] { display: none !important; }
+.arch .count { font-size: 0 !important; line-height: 0; display: flex; justify-content: center; }
+.arch .count svg { display: block; }
+
+.fav.icon-only { padding: 0 !important; justify-content: center !important; align-items: center !important; }
+.fav.icon-only img { border-radius: 20px; }
+
+.hdmi-pick { position: fixed; inset: 0; z-index: 50; background: rgba(36, 58, 43, 0.98); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px; }
+.hp-title { font-size: 44px; color: var(--color-gold-200, #E8C675); }
+.hp-row { display: flex; gap: 32px; }
+.hdmi-pick .hp-item { position: relative; width: 260px; height: 200px; border: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font: inherit; }
+.hp-item b { font-size: 44px; font-weight: 600; }
+.hp-item span { font-size: 26px; opacity: 0.8; }
+.hp-item.dim { opacity: 0.55; }
+.watch-catch { position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); background: rgba(36, 58, 43, 0.8); color: #fff; border: 0; border-radius: 16px; padding: 14px 28px; font: inherit; font-size: 26px; transition: opacity 0.4s; }
+.watch-catch.quiet { opacity: 0; }
+.watch-catch:focus { outline: 0; }
+
+/* Home, Tizen: the mihrab carries the time, one date line, the next prayer with its day arc, and the verse below the arc. */
+body.tizen .tv[data-screen=home] .when { inset-inline-start: 136px; width: 520px; top: 250px; align-items: center; text-align: center; gap: 0; }
+body.tizen .tv[data-screen=home] .when .clock { font-family: var(--font-family-ui); font-weight: 500; font-size: 76px; line-height: 1.1; }
+body.tizen .tv[data-screen=home] .when .hdate { font-size: 26px; margin-top: 10px; }
+body.tizen .tv[data-screen=home] .when .gdate { display: none; }
+body.tizen .tv[data-screen=home] .info { top: 450px !important; }
+body.tizen .tv[data-screen=home] .info .sub, body.tizen .tv[data-screen=home] .info .sub2 { display: none; }
+body.tizen .tv[data-screen=home] .verse { inset-inline-start: 126px; width: 540px; top: 770px; text-align: center; }
+body.tizen .tv[data-screen=home] .verse p { font-size: 26px; line-height: 1.5; text-align: center; margin: 0; white-space: nowrap; }
+body.tizen .tv[data-screen=home] .verse small { display: block; margin-top: 6px; font-size: 22px; color: var(--color-mist-400); }
+
+html.watching, html.watching body, html.watching .tv-frame { background: transparent !important; }
+
+/* Tulip photo ground and a palette pulled from it: stem green and tulip yellow. */
+body.tizen {
+  --color-lapis-950: #1b2d21;
+  --color-lapis-900: #243a2b;
+  --color-lapis-800: #30503a;
+  --color-lapis-700: #3e6548;
+  --color-gold-400: #e6bd52;
+  --color-gold-200: #f7e09c;
+  --color-lapis-800-60: rgba(48, 80, 58, 0.6);
+  --color-gold-400-60: rgba(230, 189, 82, 0.6);
+  --color-banner-track: rgba(230, 189, 82, 0.25);
+  --color-seg-track-focused: rgba(36, 58, 43, 0.15);
+  --font-family-display-en: Alexandria, sans-serif; --font-family-display-ar: Alexandria, sans-serif; --font-family-sacred: Alexandria, sans-serif;
+  --color-scrim: rgba(27, 45, 33, 0.6);
+  --color-scrim-menu: rgba(36, 58, 43, 0.92);
+  --color-scrim-panel: rgba(27, 45, 33, 0.7);
+  --color-mist-400: #b4c4b0;
+  --color-disabled-text: #8a9d88;
+  --color-bell-off-border: rgba(180, 196, 176, 0.4);
+  --color-on-plaster-secondary: #3f5444;
+  --color-on-plaster-border: rgba(36, 58, 43, 0.6);
+  --color-on-plaster-button-border: rgba(36, 58, 43, 0.35);
+}
+body.tizen .tv .lattice { display: none; }

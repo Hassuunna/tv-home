@@ -5,9 +5,13 @@ process.env.TZ = 'Africa/Cairo';
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+// PUBLIC_TARGET=tizen builds the pages the Samsung TV widget is made from (tizen/build.mjs): flat files, no sitemap.
+const tizen = process.env.PUBLIC_TARGET === 'tizen';
+
 export default defineConfig({
   site: 'https://egyjs.github.io',
-  base: '/afnon-android-tv-launcher',
-  trailingSlash: 'always',
-  integrations: [sitemap({ i18n: { defaultLocale: 'ar', locales: { ar: 'ar', en: 'en' } } })],
+  base: tizen ? '/' : '/afnon-android-tv-launcher',
+  trailingSlash: tizen ? 'never' : 'always',
+  ...(tizen ? { outDir: 'dist-tizen', build: { format: 'file' } } : {}),
+  integrations: tizen ? [] : [sitemap({ i18n: { defaultLocale: 'ar', locales: { ar: 'ar', en: 'en' } } })],
 });

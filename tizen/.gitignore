@@ -1,0 +1,7 @@
+node_modules/
+dist/
+signed/
+*.wgt
+adhan/
+shots/
+assets/bg/

@@ -5,7 +5,7 @@ import Arch from '../components/Arch.astro';
 import Icon from '../components/Icon.astro';
 import type { Ctx } from '../lib/ctx';
 import { stationOf, STATIONS } from '../lib/data';
-import { href } from '../lib/site';
+import { href, TIZEN } from '../lib/site';
 import { homeModel } from './home';
 
 interface Props { ctx: Ctx }
@@ -28,8 +28,8 @@ const more = ar ? ['يوتيوب ميوزك', 'متجر Play', 'مشغل الو�
 const allCount = 14;
 const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this opens' };
 ---
-<Arch ctx={ctx} infoTop={488} subSize={26} subGap={12} sub2Color="var(--color-gold-200)" sub2Gap={8} />
-<a class="ft arch-btn" href={href('prayer-day', lang) + '#tv'} {...(cardHidden ? { 'data-focus-start': '' } : {})} data-hints={hints(t.hintOk(t.s('today')), t.s('hintApps'))}>
+<Arch ctx={ctx} infoTop={488} subSize={26} subGap={12} sub2Color="var(--color-gold-200)" sub2Gap={8} oneLine={TIZEN} />
+<a class="ft arch-btn" href={href('prayer-day', lang) + '#tv'} {...(cardHidden && !TIZEN ? { 'data-focus-start': '' } : {})} data-hints={hints(t.hintOk(t.s('today')), t.s('hintApps'))}>
   <Icon name="compass" /> <span>{t.s('today')}</span>
 </a>
 
@@ -57,7 +57,7 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
 
 <div class="label fav-label caps">{t.s('fav')}</div>
 {favs.map((f, i) => (
-  <button class="ft fav" style={`inset-inline-start:calc(var(--layout-courtyard-inset-inline-start) + ${i} * (var(--layout-tile-favourite-width) + var(--layout-gap-favourites)))`}
+  <button class="ft fav" {...(TIZEN && cardHidden && i === 0 ? { 'data-focus-start': '' } : {})} style={`inset-inline-start:calc(var(--layout-courtyard-inset-inline-start) + ${i} * (var(--layout-tile-favourite-width) + var(--layout-gap-favourites)))`}
     data-nav-up=".radio-pill" data-toast={`${W.site} ${f.label}`} data-hints={hints(t.hintOk(t.s('open', { app: f.label })), t.s('hintMore'))}>
     <Icon name={f.icon} size={44} />
     <span>{f.label}</span>
@@ -65,7 +65,7 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
 ))}
 
 <div class="label more-label caps">{t.s('more')}</div>
-{[...more, t.s('settings')].map((label, i) => {
+{(TIZEN ? more : [...more, t.s('settings')]).map((label, i) => {
   const style = `inset-inline-start:calc(var(--layout-courtyard-inset-inline-start) + ${i} * ((var(--layout-courtyard-width) - 5 * var(--layout-gap-more)) / 6 + var(--layout-gap-more)))`;
   const h = hints(t.hintOk(t.s('open', { app: label })), t.s('hintFavs'));
   return label === t.s('settings')
@@ -124,8 +124,9 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
   import { homeModel } from './home';
   import { stationOf } from '../lib/data';
   import { makeText, type Lang } from '../lib/text';
+  import { TIZEN } from '../lib/site';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="home"]')!;
   if (stage.dataset.screen === 'home') {
     const $ = <T extends HTMLElement = HTMLElement>(s: string) => stage.querySelector<T>(s)!;
     const card = $('[data-card]');
@@ -138,8 +139,10 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
       if (card.hidden === !show) return;
       card.hidden = !show;
       // The card takes the default focus while it shows, as on the TV.
-      $(show ? '.arch-btn' : '[data-card-ok]').removeAttribute('data-focus-start');
-      $(show ? '[data-card-ok]' : '.arch-btn').setAttribute('data-focus-start', '');
+      // On the TV build the first favourite, not the arch button, is where focus starts.
+      const rest = (TIZEN && stage.querySelector<HTMLElement>('.fav:not([hidden])')) || $('.arch-btn');
+      stage.querySelectorAll('[data-focus-start]').forEach((e) => e.removeAttribute('data-focus-start'));
+      (show ? $('[data-card-ok]') : rest).setAttribute('data-focus-start', '');
       if (show && stage.contains(document.activeElement)) $('[data-card-ok]').focus({ preventScroll: true });
     };
     live(homeModel, (c) => {
@@ -147,7 +150,7 @@ const W = { site: ar ? 'على التلفاز يفتح هذا' : 'On the TV this
       const remind = c.prefs.remind * 60;
       const due = (forced || (remind > 0 && left > 0 && left <= remind)) && card.dataset.for !== dismissedFor;
       showCard(due);
-    });
+    }, stage);
     $('[data-card-ok]').addEventListener('click', () => {
       dismissedFor = card.dataset.for ?? '';
       showCard(false);

@@ -34,10 +34,11 @@ const note = t.ar ? 'المعاينة على الويب لا تشغّل صوت �
 <script>
   import { live } from '../scripts/live';
   import { callModel } from './call';
+  import { TIZEN, go } from '../lib/site';
 
-  const stage = document.querySelector<HTMLElement>('.tv')!;
+  const stage = document.querySelector<HTMLElement>('.tv[data-screen="call"]')!;
   if (stage.dataset.screen === 'call') {
-    live(callModel);
+    live(callModel, undefined, stage);
     const col = stage.querySelector<HTMLElement>('.col')!;
     const play = stage.querySelector<HTMLButtonElement>('[data-play]')!;
     const note = stage.querySelector<HTMLElement>('[data-note]')!;
@@ -50,7 +51,13 @@ const note = t.ar ? 'المعاينة على الويب لا تشغّل صوت �
       note.hidden = !playing;
     });
     // As on the TV, the call closes by itself (motion.call-auto-dismiss).
-    window.setTimeout(() => location.assign(col.dataset.homeHref!), Number(col.dataset.autoDismiss));
+    let dismissTimer = 0;
+    const arm = () => { clearTimeout(dismissTimer); dismissTimer = window.setTimeout(() => go(col.dataset.homeHref!), Number(col.dataset.autoDismiss)); };
+    if (TIZEN) {
+      // One document holds every screen: the timer runs only while the call is showing.
+      stage.addEventListener('afnon:show', arm);
+      stage.addEventListener('afnon:hide', () => clearTimeout(dismissTimer));
+    } else arm();
   }
 </script>
 

@@ -1,0 +1,13 @@
+{
+  "name": "afnon-tizen",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "shots": "node shots.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "playwright": "^1.50.0"
+  }
+}
