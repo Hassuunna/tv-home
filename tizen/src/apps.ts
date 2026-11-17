@@ -25,7 +25,7 @@ const HDMI_ID = 'afnon:hdmi'; // not an app: opens Samsung's own Source picker (
 const DEFAULT_FAVS = ['9Ur5IzDKqV.TizenYouTube', 'yvoS9TN5KY.YangoSpark', 'J5PGJgxrjt.WatchIT', 'Ggl33q588H.MBC', HDMI_ID];
 const MORE_FIRST = ['org.tizen.netflix-app', 'org.tizen.primevideo', 'com.samsung.tv.csfs', 'org.tizen.menu'];
 const FAVS_KEY = 'afnon-tizen-favs';
-const SELF = /\.(Afnon|CleanFrame)$/; // this launcher itself is not an app to open
+const SELF = /\.(Afnon|CleanFrame|TizenHome)$/; // this launcher itself is not an app to open
 
 export function loadFavs(): string[] | null {
   try { const v = JSON.parse(localStorage.getItem(FAVS_KEY) || 'null'); return Array.isArray(v) ? v : null; } catch (e) { return null; }

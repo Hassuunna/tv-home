@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://afnon.tv/Afnon" version="0.1.0" viewmodes="maximized">
-  <tizen:application id="HrClean001.CleanFrame" package="HrClean001" required_version="2.3"/>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://hassuunna.com/TizenHome" version="0.1.0" viewmodes="maximized">
+  <tizen:application id="Hassuunna1.TizenHome" package="Hassuunna1" required_version="2.3"/>
   <content src="index.html"/>
   <name>Afnon</name>
   <description>Afnon home screen built around the prayer day.</description>
