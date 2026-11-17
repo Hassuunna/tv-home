@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://afnon.tv/Afnon" version="0.1.0" viewmodes="maximized">
-  <tizen:application id="HrClean001.CleanFrame" package="HrClean001" required_version="2.3"/>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://hassuunna.com/TizenHome" version="0.1.0" viewmodes="maximized">
+  <tizen:application id="Hassuunna1.TizenHome" package="Hassuunna1" required_version="2.3"/>
   <content src="index.html"/>
-  <name>Afnon</name>
-  <description>Afnon home screen built around the prayer day.</description>
-  <author>Afnon</author>
+  <name>TV Home</name>
+  <description>Simple home screen with favourite apps, HDMI inputs and a clock.</description>
+  <author>Hassan</author>
   <icon src="icon.png"/>
   <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
   <tizen:profile name="tv-samsung"/>
@@ -17,25 +17,7 @@
   <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
   <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
   <tizen:privilege name="http://tizen.org/privilege/fullscreen"/>
-  <tizen:privilege name="http://tizen.org/privilege/internet"/>
   <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="enable" encryption="disable" install-location="auto" hwkey-event="enable"/>
   <tizen:metadata key="http://tizen.org/metadata/app_ui_type/base_screen_resolution" value="extensive"/>
   <tizen:metadata key="http://samsung.com/tv/metadata/multitasking.support" value="true"/>
-  <access origin="https://api.open-meteo.com" subdomains="true"/>
-  <access origin="https://stream.radiojar.com" subdomains="true"/>
-  <access origin="http://stream.radiojar.com" subdomains="true"/>
-  <access origin="https://quran-radio.org" subdomains="true"/>
-  <access origin="https://streaming.zaytonatube.com" subdomains="true"/>
-  <access origin="https://live.kwikmotion.com" subdomains="true"/>
-  <access origin="https://jrtv-live.ercdn.net" subdomains="true"/>
-  <access origin="https://backup.qurango.net" subdomains="true"/>
-  <access origin="https://ahmsamir.radioca.st" subdomains="true"/>
-  <access origin="https://stream-159.zeno.fm" subdomains="true"/>
-  <access origin="https://9090streaming.mobtada.com" subdomains="true"/>
-  <access origin="https://radio.quranradiotafsir.com" subdomains="true"/>
-  <access origin="https://carina.streamerr.co" subdomains="true"/>
-  <access origin="https://radio.talksport.com" subdomains="true"/>
-  <access origin="https://audio.bfmtv.com" subdomains="true"/>
-  <access origin="https://ice5.somafm.com" subdomains="true"/>
-  <access origin="https://qurango.net" subdomains="true"/>
 </widget>

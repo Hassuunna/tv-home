@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=1920"><title>TV Home</title>
+<script src="$WEBAPIS/webapis/webapis.js"></script>
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<main id="home" class="screen">
+  <header>
+    <div><div id="clock"></div><div id="date"></div></div>
+    <div class="top"><button class="pill" id="wifi">Wi-Fi</button><button class="pill" id="gear">Settings</button></div>
+  </header>
+  <h2>Favourites</h2>
+  <section id="favs" class="grid"></section>
+  <h2>More</h2>
+  <section id="more" class="grid small"></section>
+  <footer id="hint">OK open · Back home</footer>
+</main>
+<main id="apps" class="screen" hidden>
+  <h1>All apps</h1>
+  <section id="all" class="grid small"></section>
+  <footer>OK open · Yellow add or remove from favourites · Back home</footer>
+</main>
+<main id="settings" class="screen" hidden>
+  <h1>Settings</h1>
+  <section id="rows" class="rows"></section>
+  <footer>OK change · Back home</footer>
+</main>
+<main id="saver" class="screen" hidden><div id="sclock"></div><div id="sdate"></div></main>
+<div id="toast" hidden></div>
+<script src="js/app.js"></script>
+</body></html>
