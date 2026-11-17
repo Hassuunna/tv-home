@@ -1,3 +1,9 @@
+> **Hassuunna fork, Muslim edition.** This is the full Afnon app plus a Samsung Tizen port (`tizen/`, app id
+> `Hassuunna1.TizenHome`). An English-only, non-Muslim edition (no prayer, Arabic or radio, called *TV Home*, package
+> `com.hassuunna.tvhome`) lives on the `main` branch of this repo; this branch is `muslim-edition`. Original project:
+> [egyjs/afnon-android-tv-launcher](https://github.com/egyjs/afnon-android-tv-launcher). The Tizen port and fork
+> identity are by Hassan ([@Hassuunna](https://github.com/Hassuunna)).
+
 <div align="center">
 
 # Afnon · أفنون
