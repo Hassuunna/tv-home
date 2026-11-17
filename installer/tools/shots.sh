@@ -4,7 +4,7 @@
 # Uses the debug-only --es screen hook (MainActivity.showDemo) and per-app locales (Android 13+).
 set -e
 APK=${1:?apk}; OUT=${2:?out dir}
-PKG=tv.afnon.installer
+PKG=com.hassuunna.tvhomeinstaller
 mkdir -p "$OUT"
 adb install -r "$APK" >/dev/null
 for loc in ar en; do

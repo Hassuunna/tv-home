@@ -4,14 +4,14 @@
      as a second language, since an exact match on a later language beats the default.) -->
 <resources>
     <string name="lang" translatable="false">en</string>
-    <string name="app_name">Afnon Installer</string>
+    <string name="app_name">TV Home Installer</string>
 
     <string name="stage_prepare">Prepare</string>
     <string name="stage_connect">Connect</string>
     <string name="stage_install">Install</string>
 
-    <string name="guide_title">Afnon on your TV</string>
-    <string name="guide_lead">Install Afnon from this phone in a few minutes, no computer needed. First, four steps on the TV with its remote.</string>
+    <string name="guide_title">TV Home on your TV</string>
+    <string name="guide_lead">Install TV Home from this phone in a few minutes, no computer needed. First, four steps on the TV with its remote.</string>
     <string name="g1_title">Open About</string>
     <string name="g2_title">Become a developer</string>
     <string name="g2_body">Press OK on it 7 times, until the TV says you are now a developer.</string>
@@ -57,25 +57,25 @@
     <string name="pair_button">Pair</string>
     <string name="pairing">Pairing…</string>
 
-    <string name="install_title">Installing Afnon</string>
-    <string name="install_lead_version">Afnon %1$s · keep this screen open. It takes a minute or two.</string>
+    <string name="install_title">Installing TV Home</string>
+    <string name="install_lead_version">TV Home %1$s · keep this screen open. It takes a minute or two.</string>
     <string name="install_lead">Keep this screen open. It takes a minute or two.</string>
     <string name="t_download">Download from GitHub</string>
     <string name="t_send">Send to the TV</string>
     <string name="mb_of">%1$s of %2$s MB</string>
-    <string name="old_signature_title">Another copy of Afnon is on the TV</string>
+    <string name="old_signature_title">Another copy of TV Home is on the TV</string>
     <string name="old_signature_body">It was signed with a different key, so it can’t be updated in place. Removing it also removes its settings (city, favourites, adhan choices). Remove it and install the latest?</string>
     <string name="remove_and_install">Remove and install</string>
     <string name="cancel">Cancel</string>
 
 
-    <string name="done_title">Afnon is on your TV</string>
-    <string name="done_lead">Afnon %1$s is installed and set up. Pick up the remote.</string>
-    <string name="done_lead_plain">Afnon is installed and set up. Pick up the remote.</string>
+    <string name="done_title">TV Home is on your TV</string>
+    <string name="done_lead">TV Home %1$s is installed and set up. Pick up the remote.</string>
+    <string name="done_lead_plain">TV Home is installed and set up. Pick up the remote.</string>
     <string name="done_partly_title">Installed, with a problem</string>
-    <string name="done_partly_lead">Afnon is on the TV, but a step marked in red didn’t finish. Run the installer again to retry it.</string>
+    <string name="done_partly_lead">TV Home is on the TV, but a step marked in red didn’t finish. Run the installer again to retry it.</string>
     <string name="tip_title">One more thing</string>
-    <string name="tip_body">You can turn off USB debugging and Wireless debugging on the TV now. To update Afnon later, turn debugging back on and open this app again.</string>
+    <string name="tip_body">You can turn off USB debugging and Wireless debugging on the TV now. To update TV Home later, turn debugging back on and open this app again.</string>
     <string name="finish">Done</string>
     <string name="another">Install on another TV</string>
 
@@ -86,24 +86,24 @@
     <string name="pair_failed">Pairing didn’t work (%1$s). Open the pairing dialog on the TV again; it shows a new code each time.</string>
     <string name="install_failed">The TV refused the install: %1$s</string>
     <string name="error_install">Something went wrong: %1$s</string>
-    <string name="tv_too_old">Afnon needs Android 8 or later on the TV.</string>
+    <string name="tv_too_old">TV Home needs Android 8 or later on the TV.</string>
     <string name="check_title">Things to check</string>
     <string name="check_body">• The TV is on and awake.\n• Debugging is on in Developer options.\n• The TV and this phone are on the same Wi-Fi.</string>
     <string name="try_again">Try again</string>
-    <string name="steps_failed_lead">Afnon is on the TV, but a step marked in red didn’t finish. Try it again, or continue and come back to it later.</string>
+    <string name="steps_failed_lead">TV Home is on the TV, but a step marked in red didn’t finish. Try it again, or continue and come back to it later.</string>
     <string name="back">Back</string>
 
     <!-- Make it yours -->
     <string name="stage_personal">Set up</string>
     <string name="found_heading">On your Wi-Fi</string>
-    <string name="already_on_tv">Afnon %1$s is already on the TV</string>
+    <string name="already_on_tv">TV Home %1$s is already on the TV</string>
     <string name="continue_">Continue</string>
     <string name="skip">Skip</string>
     <string name="personal_title">Make it yours</string>
     <string name="personal_loading">Reading the TV’s apps and settings…</string>
-    <string name="personal_old">To choose the city and favourites from the phone, the TV needs the next Afnon release. Until then, set them in Afnon’s Settings on the TV.</string>
+    <string name="personal_old">To choose the city and favourites from the phone, the TV needs the next TV Home release. Until then, set them in TV Home’s Settings on the TV.</string>
     <string name="prayer_title">Prayer times</string>
-    <string name="prayer_lead">Afnon shows the times for your city and calls the adhan by itself.</string>
+    <string name="prayer_lead">TV Home shows the times for your city and calls the adhan by itself.</string>
     <string name="city_label">Your city</string>
     <string name="lang_label">Language on the TV</string>
     <string name="lang_ar">العربية</string>

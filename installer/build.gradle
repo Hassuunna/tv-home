@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'tv.afnon.installer'
+    namespace 'com.hassuunna.tvhomeinstaller'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'tv.afnon.installer'
+        applicationId 'com.hassuunna.tvhomeinstaller'
         minSdk 26
         targetSdk 34
         versionCode 2

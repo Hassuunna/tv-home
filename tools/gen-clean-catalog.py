@@ -31,7 +31,7 @@ KINDS = [
 ]
 # Never offered, whatever a list says: Afnon itself, and what keeps a TV usable or reachable over ADB.
 NEVER = re.compile(
-    r"^tv\.afnon\.|^android$|^com\.android\.(systemui|settings|tv\.settings|shell|packageinstaller|permissioncontroller|"
+    r"^(com\.hassuunna\.tvhome|tv\.afnon\.)|^android$|^com\.android\.(systemui|settings|tv\.settings|shell|packageinstaller|permissioncontroller|"
     r"providers\.|inputmethod|externalstorage|webview)|^com\.google\.android\.(gms|gsf|webview|tv\.remote\.service|"
     r"packageinstaller|permissioncontroller|inputmethod)|inputmethod|tvinput|\.tv\.settings$|bluetooth|wifi|networkstack")
 

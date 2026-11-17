@@ -4,6 +4,11 @@ All notable changes to Afnon. Versions match `versionName` in `app/build.gradle`
 
 ## [Unreleased]
 
+### Changed
+- TV Home edition: English only, LTR. Removed prayer times, adhan, reminders, Qibla, Friday/Ramadan modes, Hijri
+  date, Arabic/RTL, Quran radio and reciters, and the adhan-java dependency.
+- Rebranded to `com.hassuunna.tvhome` (installer `com.hassuunna.tvhomeinstaller`), app name "TV Home".
+
 ### Added
 - Calculation method «وزارة الأوقاف والشؤون الدينية، سلطنة عُمان» (Oman Ministry of Awqaf): Fajr and Isha at 18°, Asr
   by the standard shadow, +5 minutes on Dhuhr, Asr and Maghrib. The ministry publishes no parameters, so they were
